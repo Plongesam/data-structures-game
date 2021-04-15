@@ -111,41 +111,6 @@ def update_board_db(board, user_id='-1', token='-1'):
 
             # Game continues
             else:
-
-        # Game ended
-        if (board['graph']['root_node'] == board['graph']['gold_node'] or
-                len(board['deck']) == 0):
-
-            # update the board
-            board['end_game'] = True
-            board['turn'] = max(board['player_points'], key=board['player_points'].get)  # get player w/ max points
-            result['game_board'] = board
-
-            # if user is authenticated
-            if user_id not in ['-1', -1, ''] and token not in ['-1', -1, '']:
-
-                # check if the game is being loaded from profile page
-                if 'profile_load' in list(board.keys()) and board['profile_load'] is False:
-
-                    # Here check if user_id matches the token with the database
-                    if profile_db.check_user(user_id, token):
-                        # Currently error return if user is not authenticated is disabled
-                        # It just not updates the score
-                        # result['error'] = True
-                        # result['reason'] = "User is not authenticated"
-                        # return result
-
-                        # if the user is in part of the players (paranoid check)
-                        if str(user_id) in board['player_ids']:
-
-                            # if not negative points
-                            if board['player_points'][str(user_id)] > 0:
-
-
-                # Next player's turn
-                next_player_index = (board['player_ids'].index(board['turn']) + 1) % len(board['player_ids'])
-                board['turn'] = board['player_ids'][next_player_index]
-
                 _ = db.update_game(board['game_id'], board)
 
                 # hide the UID used by data structure backend from user
