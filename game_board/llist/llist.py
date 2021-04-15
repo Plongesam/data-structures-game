@@ -3,7 +3,7 @@ import sys
 """"handles all the stuff that happens inside the tunnels"""
 
 
-class LList_Handler():
+class LList_Handler:
     def __init__(self):
         self.ants = {}
         self.chambers = []
@@ -50,20 +50,21 @@ class LList_Handler():
                                                        and self.tunnels[connecting_chbr][0] == 1):
             self.tunnels[newchamberID] = [1, [connecting_chbr, None]]
             self.tunnels[connecting_chbr][1][1] = newchamberID
-            self.under_attack[newchamberID] = False
-            self.food[newchamberID] = {'crumb': 0, 'berry': 0, 'donut': 0}
-            self.ants[newchamberID] = 0
+        self.under_attack[newchamberID] = False
+        self.food[newchamberID] = {'crumb': 0, 'berry': 0, 'donut': 0}
+        self.ants[newchamberID] = 0
 
     def fillTunnel(self, chamber):
-        if chamber in self.chambers.keys():
-            if self.tunnels[chamber][1][1]:
+        if chamber in self.chambers:
+            if self.tunnels[chamber][0] == 2:
                 self.tunnels[chamber] -= 1
+                self.tunnels[self.tunnels[chamber][1][1]][1][0] = None
                 self.tunnels[chamber][1][1] = None
         else:
             raise ValueError
 
     def fillChamber(self, chamber):
-        if chamber in self.chambers.keys():
+        if chamber in self.chambers:
             if self.num_chambers > 1:
                 self.tunnels[self.tunnels[chamber][1][0]][1][1] = None
             self.tunnels.pop(chamber)
@@ -88,7 +89,7 @@ def makeNewGame():
     return handler.to_gamestate()
 
 
-"""API callable function; given a game state and an action (array), returns the game state
+"""API callable function; given a game state and an action (string), returns the game state
 with the action performed"""
 
 
@@ -96,16 +97,16 @@ def doAction(game, action):
     a = ['dig_tunnel', 'fill_tunnel', 'dig_chamber', 'fill_chamber']
     actionable = LList_Handler.from_gamestate(game)
     if action[0] == a[0]:
-        actionable.dig_tunnel(a[1], a[2])
+        actionable.digTunnel(a[1], a[2])
         return actionable.to_gamestate()
     elif action[0] == a[1]:
-        actionable.fill_tunnel(a[1])
+        actionable.fillTunnel(a[1])
         return actionable.to_gamestate()
     elif action[0] == a[2]:
-        actionable.dig_chamber(a[1])
+        actionable.digChamber(a[1])
         return actionable.to_gamestate()
     elif action[0] == a[3]:
-        actionable.fill_chamber(a[1])
+        actionable.fillChamber(a[1])
         return actionable.to_gamestate()
     else:
         raise ValueError
