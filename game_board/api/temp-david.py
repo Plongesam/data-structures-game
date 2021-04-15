@@ -112,10 +112,10 @@ def board(request, game_id):
 @api_view(['GET'])
 def dig_tunnel(request, game_id, origin, destination):
     """
-    Attempts to dig a tunnel from the requested node to a requested destination
+    Attempts to dig a tunnel from the requested chamber to a requested destination
     :param game_id: unique identifier of the board
-    :param origin: the node that the player wishes to dig from
-    :param destination: the place that the player wishes to dig to (node name, 'surface', or 'none'
+    :param origin: the chamber that the player wishes to dig from
+    :param destination: the place that the player wishes to dig to (chamber name, 'surface', or 'none'
     """
     # Game must exist
     # Load the game board from database
@@ -132,15 +132,15 @@ def dig_tunnel(request, game_id, origin, destination):
 
     # Player must still have dig 'energy' for that day
     if board['time_tracks']['dig_tunnel_track'] == 0:
-        return Response({'invalid_action': 'no dig energy'},
+        return Response({'invalid_action': 'no more dig tunnel moves left!'},
                         status=status.HTTP_400_BAD_REQUEST)
     # Origin must exist
-    if origin is not 'surface' and origin not in board['graph']['node_list']:
+    if origin is not 'surface' and origin not in board['graph']['chamber_list']:
         return Response({'invalid_action': 'origin does not exist'},
                         status=status.HTTP_400_BAD_REQUEST)
 
-    # If destination is NOT 'none', it must exist (node OR surface)
-    if destination is not 'none' and destination not in board['graph']['node_list']:
+    # If destination is NOT 'none', it must exist (chamber OR surface)
+    if destination is not 'none' and destination not in board['graph']['chamber_list']:
         return Response({'invalid_action': 'destination does not exist'},
                         status=status.HTTP_400_BAD_REQUEST)
 
@@ -162,7 +162,7 @@ def dig_tunnel(request, game_id, origin, destination):
         return Response({'invalid_action': 'no ants at destination'},
                         status=status.HTTP_400_BAD_REQUEST)
 
-    # Origin node must NOT already have an exit tunnel
+    # Origin chamber must NOT already have an exit tunnel
     if board['graph']['num_tunnels'][origin]['exit'] is True:
         return Response({'invalid_action': 'exit tunnel exists'},
                             status=status.HTTP_400_BAD_REQUEST)
@@ -199,6 +199,91 @@ def dig_tunnel(request, game_id, origin, destination):
 
     board_response = response_status['game_board']
     return Response(board_response)
+
+def dig_chamber(request, game_id, origin, move_ant):
+    """
+    Attempts to dig a new chamber off of a current dead-end tunnel
+    :param game_id: unique identifier of the board
+    :param origin: the chamber that the player wishes to dig from
+    :param move_ant: whether the player wishes to move the ant into the new chamber
+    """
+    # checklist
+
+    # Check if game exists
+    response_status = utils.load_board_db(game_id)
+    if response_status['error']:
+        return Response({'error': response_status['reason']},
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    board = response_status['game_board']
+
+    # Check for dig chamber energy
+    if board['time_tracks']['dig/fill_chamber'] == 0:
+        return Response({'invalid_action': 'no more dig tunnel moves left!'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    # Check if move_ant is a valid input
+    if move_ant is not 'yes':
+        if move_ant is not 'no':
+            return Response({'invalid_action': 'invalid free move request!'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+    # Check if origin exists
+    if origin is not 'surface' and origin not in board['graph']['chamber_list']:
+        return Response({'invalid_action': 'origin does not exist'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    # check if origin contains at least one ant
+    if origin is 'surface' and board['total_surface_ants'] == 0:
+        return Response({'invalid_action': 'no ants on surface'},
+                        status=status.HTTP_400_BAD_REQUEST)
+    if board['graph']['num_ants'][origin] == 0:
+        return Response({'invalid_action': 'no ants at origin'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    # Check if origin contains an exit tunnel
+    if board['graph']['num_tunnels'][origin]['exit'] is False:
+        return Response({'invalid_action': 'no available tunnel from origin'},
+                        status=status.HTTP_400_BAD_REQUEST)
+    # if origin contains a next tunnel, check if current next is 'none'
+    if board['graph']['num_tunnels'][origin]['next'] is not 'none':
+        return Response({'invalid_action': 'no available tunnel from origin'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+
+    # if at this point, dig request is valid: update ALL relevant game board variables
+    board['total_chambers'] += 1
+    chamber_number = str(board['total_chambers'])
+    chamber_id = "chamber" + chamber_number
+
+    board['graph']['chamber_list'].append(chamber_id)
+
+    board['graph']['num_tunnels'][chamber_id]['entrance'] = True
+    board['graph']['num_tunnels'][chamber_id]['exit'] = False
+    board['graph']['num_tunnels'][chamber_id]['next'] = 'none'
+
+    board['graph']['num_food'][chamber_id] = 0
+
+    if move_ant is 'yes':
+        board['graph']['num_ants'][chamber_id] = 1
+        if origin is not 'surface':
+            board['graph']['num_ants'][origin] -= 1
+        else:
+            board['total_surface_ants'] -= 1
+
+    board['time_tracks']['dig/fill_chamber'] -= 1
+
+
+    user_id = board['player_ids']
+    token = -1
+    # Update the board on database
+    response_status = utils.update_board_db(board, user_id, token)
+    if response_status['error']:
+        return Response({'error': response_status['reason']},
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    board_response = response_status['game_board']
+    return Response(board_response)
+
 
 @api_view(['GET'])
 def spawn_ant(request, game_id):
