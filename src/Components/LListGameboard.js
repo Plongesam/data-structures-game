@@ -160,14 +160,9 @@ class LListGameboard extends Component {
     return (
       <div className="gamepage">
         
-        
+        { this.renderChoices()}
         <div className="stats-container">
-          
           <Stats time={this.state.time} food={this.state.total_food} ants={this.state.total_ants} chambers={this.state.numChambers}/>
-          
-        </div>
-        <div>
-          { this.renderChoices()}
         </div>
 
         {this.state.hovering? 
