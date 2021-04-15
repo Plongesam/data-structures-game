@@ -52,10 +52,12 @@ class TestWinLose(TestCase):
         """our chambers are connected so this won't cause a lose"""
         tunnelboard = {'graph': startergraph, 'queen_at_head': True}
         self.assertEqual(lose_state_llist(starterboard), False)
+        """but now they will!"""
         startergraph['tunnels']['chamber1'][1][0] = None
         losetunnelboard = {'graph': startergraph, 'queen_at_head': True}
         self.assertEqual(lose_state_llist(losetunnelboard), True)
         startergraph['tunnels']['chamber1'][1][0] = 'Head'
+        "should work for both top chamber and the connection from c1 to c2"
         action = ['fill_tunnel', 'chamber1']
         losebynoconnection = doAction(startergraph, action)
         self.assertEqual(lose_state_llist({'graph': losebynoconnection, 'queen_at_head': True}), True)
