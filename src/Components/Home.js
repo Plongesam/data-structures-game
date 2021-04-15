@@ -38,6 +38,15 @@ class Home extends Component{
       }
 
       //assemble api call 
+      //get both AVL rankings and LList rankings
+      
+      /*
+      let LLrankingsURL = url + "api/LLrankings/"
+      let response = await fetch(LLrankingsURL);
+      let LLrank_head = await response.json()
+      this.setState( { data: LLrank_head['top_ranking_Linked_List_players'] })
+      */
+
       let rankingsURL = url + "api/rankings/" + 20;
       let response = await fetch(rankingsURL);
       let rank_head = await response.json();

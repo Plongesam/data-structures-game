@@ -44,9 +44,9 @@ class TestStringMethods(unittest.TestCase):
         player_list.click()
         player_list.send_keys(Keys.COMMAND + "a")
         player_list.send_keys(Keys.DELETE)
-        player_list.send_keys("ID1,ID2")
+        player_list.send_keys("Jonathan")
 
-        self.assertEqual(player_list.get_attribute('value'), "ID1,ID2")
+        self.assertEqual(player_list.get_attribute('value'), "Jonathan")
 
         # Choose difficulty
         difficulty_levels = Select(driver.find_element_by_name('level'))
@@ -62,6 +62,8 @@ class TestStringMethods(unittest.TestCase):
 
         self.assertEqual(selected_dsGame.text, 'Linked List Standard')
 
+        # Start the game by clicking start button, test that link takes you
+        # to linked list page
 
 
 
