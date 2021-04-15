@@ -35,7 +35,7 @@ class LlistTests(TestCase):
 
         action = ['dig_tunnel', 'chamber1', None]
         gamestate = doAction(gamestate, action)
-        self.assertEqual(gamestate['tunnels']['chamber1'], [1, [None, None]])
+        self.assertEqual(gamestate['tunnels']['chamber1'], [1, ['Head', None]])
 
         action = ['dig_chamber', 'chamber1']
         gamestate = doAction(gamestate, action)
