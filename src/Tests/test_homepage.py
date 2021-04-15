@@ -12,7 +12,7 @@ To run this test, make the below changes first:
 
 How to run:
     1) Run Django: python manage.py runserver
-    2) Run the test: python -m unittest test_node_text.py
+    2) Run the test: python test_homepage.py
 """
 import json
 import unittest
@@ -63,8 +63,18 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(selected_dsGame.text, 'Linked List Standard')
 
         # Start the game by clicking start button, test that link takes you
-        # to linked list page
+        # to linked list
+        self.driver.find_element_by_name('start_game').click()
 
+        # For iteartion 3 testing:
+        # When the automation runs you can view the new ranking table and see the new columns added for 
+        # Linked lists standard and survival, waiting on api call to be implemented to show these new scores
+
+        #Link will not take you to the correct page as of right now. We realized that we were builing our game board
+        # in the senior devolopers game_board app. We need to build our own app named llgame_board and then I can use
+        # use that app to link my start button to the correct game board for either AVL or Linked list. 
+
+    
 
 
 

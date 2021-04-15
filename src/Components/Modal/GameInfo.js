@@ -22,31 +22,38 @@ class GameInfo extends React.Component {
     }
     
     changeLink() {
-        var ds = document.getElementById('DSgame').value;
+        //Gets currently sellected DS game and the start button and save to variables
+        var ds = document.getElementById('gameDS').value;
         var startGame = document.getElementById('start_game');
+        //If AVL is selected, change link to go to /game_board
         if (ds == "AVL")
         {
-            startGame.innerHTML = <Link className="flex justify-center shadow-x1 transition duration-500 ease-in-out bg-blue-500 hover:bg-red-500 transform hover:-translate-y-1 hover:scale-105 bg-blue-300 border-blue-350 border-opacity-50 rounded-lg shadow-x1 p-5 rounded text-x1 font-bold" to="/game_board" name="start_game"> Start Game </Link>
+            startGame.innerHTML = "<Link className=\"flex justify-center shadow-x1 transition duration-500 ease-in-out bg-blue-500 hover:bg-red-500 transform hover:-translate-y-1 hover:scale-105 bg-blue-300 border-blue-350 border-opacity-50 rounded-lg shadow-x1 p-5 rounded text-x1 font-bold\" to=\"/game_board\" name=\"start_game\"> Start Game </Link>"
         }
+        //If Either linked list is selected, change link to /llgame_board (right now it is set to /game_board/llist_api)
+        //That is where the gamepage is located in /gameboard but we realized we need our own linked list gameboard. Once 
+        // our game_board is made, will link the start button to the correct gameboard for the correct game 
         else {
-            startGame.innerHTML =<Link className="flex justify-center shadow-x1 transition duration-500 ease-in-out bg-blue-500 hover:bg-red-500 transform hover:-translate-y-1 hover:scale-105 bg-blue-300 border-blue-350 border-opacity-50 rounded-lg shadow-x1 p-5 rounded text-x1 font-bold" to="/llist-game-board-start_game" name="start_game"> Start Game </Link>
+            startGame.innerHTML = "<Link className=\"flex justify-center shadow-x1 transition duration-500 ease-in-out bg-blue-500 hover:bg-red-500 transform hover:-translate-y-1 hover:scale-105 bg-blue-300 border-blue-350 border-opacity-50 rounded-lg shadow-x1 p-5 rounded text-x1 font-bold\" to=\"/game_board/llist_api\" name=\"start_game\"> Start Game </Link>"
+
         }
     }
+
     
     
-        //this handls the change in input and is later binded to state values
-        //cookies then are set to the changed values
-        handleInput = async (e) => {
-        await this.setState({ [e.target.name]: e.target.value });
+    //this handls the change in input and is later binded to state values
+    //cookies then are set to the changed values
+    handleInput = async (e) => {
+    await this.setState({ [e.target.name]: e.target.value });
         
 
-        //update cookie values when game is customized
-        const cookies = new Cookies();
-        cookies.set('level', this.state.level, { path: '/' });
-        cookies.set('playerList', this.state.playerList, { path: '/' });
-        cookies.set('gameDS', this.state.gameDS, { path: '/' });
+    //update cookie values when game is customized
+    const cookies = new Cookies();
+    cookies.set('level', this.state.level, { path: '/' });
+    cookies.set('playerList', this.state.playerList, { path: '/' });
+    cookies.set('gameDS', this.state.gameDS, { path: '/' });
        
-        }
+    }
 
 
 render(){
