@@ -364,6 +364,19 @@ def fill_chamber(request, game_id, to_fill):
     board_response = response_status['game_board']
     return Response(board_response)
 
+# @api_view(['GET'])
+# def move_ant(request, game_id, origin):
+    """
+    Spawns an ant given the game ID
+    :param game_id: unique identifier of the board
+    :param origin: identifier of an ant on the board
+    :return game board JSON:
+    """
+
+    # Checklist
+    # Check if game exists
+    #
+
 @api_view(['GET'])
 def spawn_ant(request, game_id):
     """
