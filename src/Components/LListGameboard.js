@@ -101,6 +101,55 @@ class LListGameboard extends Component {
     
   };
 
+  handleGo = (event) => {
+    alert('You have chosen to ' + this.state.action)
+    event.preventDefault();
+  };
+
+  handleChange = (event) => {
+    this.setState({ [event.target.name]: event.target.value});
+  }
+
+  renderChoices= () => {
+    return (
+      <div className="choices">
+        <form onSubmit={this.handleGo}>
+          <p style={{margin:"0", padding:"0", color:'#5f5449', fontSize:"30px"}}>ANT ACTIONS MENU</p>
+          <div style={{display:"flex", flexDirection:"row", justifyContent:"flex-start"}}>
+            <select value={this.state.action} onChange={this.handleChange} name='action' >
+              <option value="">Choose Action...</option>
+              <option value="Dig chamber">Dig Chamber</option>
+              <option value="Dig tunnel">Dig Tunnel</option>
+              <option value="Forage">Forage</option>
+              <option value="Move">Move</option>
+              <option value="Fill in chamber">Fill Chamber</option>
+            </select>
+            
+            <select value={this.state.action2} onChange={this.handleChange} name='action2'>
+              {this.state.action === 'Dig chamber' &&
+                <option value="tunnel">Choose Tunnel...</option> }
+              {this.state.action === 'Dig tunnel' &&
+                <option value="chamber">Choose chamber...</option>
+                }
+              {this.state.action === 'Forage' &&
+                <option value="ant">Choose ant...</option> }
+              {this.state.action === 'Move' &&
+                <option value="ant">Choose ant...</option> }
+              {this.state.action === 'Fill in chamber' &&
+                <option value="chamber">Choose chamber...</option> }
+            </select>
+            {this.state.action === 'Move' &&
+              <select value={this.state.chamber} onChange={this.handleChange} name='move_to_chamber'>
+                <option value="chamber">Choose Chamber...</option> 
+              </select>}
+
+          <input type="submit" style={{background:'#36cf57', borderRadius:'5px'}} value="Go!"/>
+          </div>
+        </form>
+      </div>
+    )
+  }
+
   // startHover and endHover are used when mouse is hovering over queen ant 
   startHover = () =>{
     this.setState({hovering: true})
@@ -112,10 +161,8 @@ class LListGameboard extends Component {
   render() {
     return (
       <div className="gamepage">
-        <div className="title">
-          <p>Linked List</p>
-        </div>
-
+        
+        { this.renderChoices()}
         <div className="stats-container">
           <Stats time={this.state.time} food={this.state.total_food} ants={this.state.total_ants} chambers={this.state.numChambers}/>
         </div>
@@ -124,7 +171,7 @@ class LListGameboard extends Component {
         <rect style={{width:"160px", height:"130px", background:"white", opacity:".5", position:"absolute", top:"44%", left:"27%", border:"10px solid rgba(255, 255, 255, .5)", borderRadius:"5px"}}/>
         : null}
         {this.state.hovering? 
-        <p style={{fontSize:"12px", position:"absolute", top:"44%", left:"27.5%"}}>Click to spawn worker ant</p>
+        <p style={{fontSize:"12px", color:"white", position:"absolute", top:"44%", left:"27.5%"}}>Click to spawn worker ant</p>
         : null}
         <span >
           <button ><img id="queenAnt" src={Queen} width ="130" style={{position:'absolute', top: '45.5%', left:'28%', padding:"5px 5px"}} 
