@@ -364,6 +364,8 @@ def fill_chamber(request, game_id, to_fill):
     board_response = response_status['game_board']
     return Response(board_response)
 
+##### NOTE: THIS IMPLEMENTATION WILL LIKELY CHANGE IN THE NEAR FUTURE
+    #       HOWEVER, GENERAL LOGIC SHOULD STAY THE SAME
 # @api_view(['GET'])
 # def move_ant(request, game_id, origin):
     """
@@ -375,7 +377,14 @@ def fill_chamber(request, game_id, to_fill):
 
     # Checklist
     # Check if game exists
-    #
+    # Check if origin exists
+    # Check if ant exists in origin
+    # Check if origin has an exit tunnel
+    #   if so, check if origin's exit tunnel leads to a valid destination
+    # Check if destination chamber is under attack
+    #   if so, check to see if ant is carrying food (cannot bring food into attacked chamber)
+
+    # At this point, requested move is valid. Update ALL related gameboard values and return
 
 @api_view(['GET'])
 def spawn_ant(request, game_id):
