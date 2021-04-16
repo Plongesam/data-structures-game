@@ -124,11 +124,13 @@ class LListGameboard extends Component {
               <option value="Move">Move</option>
               <option value="Fill in chamber">Fill Chamber</option>
             </select>
+            
             <select value={this.state.action2} onChange={this.handleChange} name='action2'>
               {this.state.action === 'Dig chamber' &&
                 <option value="tunnel">Choose Tunnel...</option> }
               {this.state.action === 'Dig tunnel' &&
-                <option value="chamber">Choose chamber...</option> }
+                <option value="chamber">Choose chamber...</option>
+                }
               {this.state.action === 'Forage' &&
                 <option value="ant">Choose ant...</option> }
               {this.state.action === 'Move' &&
@@ -137,7 +139,7 @@ class LListGameboard extends Component {
                 <option value="chamber">Choose chamber...</option> }
             </select>
             {this.state.action === 'Move' &&
-              <select value={this.state.chamber} onChange={this.handleChange} name='chamber'>
+              <select value={this.state.chamber} onChange={this.handleChange} name='move_to_chamber'>
                 <option value="chamber">Choose Chamber...</option> 
               </select>}
 
