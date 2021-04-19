@@ -2,7 +2,7 @@ from game_board.llist.llist import doAction
 from game_board.llist.llist import makeNewGame
 from django.test import TestCase
 
-
+"""here's a comment to test the thing"""
 class LlistTests(TestCase):
 
     def test_initialize(self):
@@ -35,7 +35,7 @@ class LlistTests(TestCase):
 
         action = ['dig_tunnel', 'chamber1', None]
         gamestate = doAction(gamestate, action)
-        self.assertEqual(gamestate['tunnels']['chamber1'], [1, [None, None]])
+        self.assertEqual(gamestate['tunnels']['chamber1'], [1, ['Head', None]])
 
         action = ['dig_chamber', 'chamber1']
         gamestate = doAction(gamestate, action)

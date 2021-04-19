@@ -5,8 +5,20 @@ export const COLUMNS = [
 		accessor: 'user_id'
 	},
 	{
-		Header: 'Career Score',
-		Footer: 'Career Score',
+		Header: 'AVL Score',
+		Footer: 'AVL Score',
 		accessor: 'points'
+	},
+	{
+		Header: 'Linked List Score',
+		Footer: 'Linked List Score',
+		accessor: 'LLpoints'
+	},
+	{	
+		Header: 'Linked List Survival Score',
+		Footer: 'Linked List Survival Score',
+		accessor: 'LLSpoints'
 	}
+
+
 ]
