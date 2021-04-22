@@ -21,7 +21,7 @@ class LListGameboard extends Component {
       // game settings
       difficulty:null,
       gameMode:null,
-      players:null,
+      player:null,
       board: null,
       gameID: null,
       token: "-1",
@@ -60,15 +60,17 @@ class LListGameboard extends Component {
       }
     }
 
+    this.setState({player: players})
+
     // add cookie variables to url
     let createGameURL = url + "game_board/llist_api/start_game/" + difficulty + "/" + players + "/" + ds
     let getGameURL = url + "game_board/llist_api/board/";
 
-    /*
+    
     //API call to start game
     let response = fetch(createGameURL);
     let game_id = await response.json();
-
+/*
     // save the get request response
     this.setState({ gameID: game_id['game_id']});
     cookies.set('game_id', game_id['game_id'], { path: '/'});
