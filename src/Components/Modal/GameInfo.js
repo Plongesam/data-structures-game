@@ -20,7 +20,7 @@ class GameInfo extends React.Component {
         this.submitDSG = this.handleInput.bind(this)
         
     }
-    
+    /*
     changeLink() {
         //Gets currently sellected DS game and the start button and save to variables
         var ds = document.getElementById('gameDS').value;
@@ -37,6 +37,10 @@ class GameInfo extends React.Component {
             startGame.innerHTML = "<Link className=\"flex justify-center shadow-x1 transition duration-500 ease-in-out bg-blue-500 hover:bg-red-500 transform hover:-translate-y-1 hover:scale-105 bg-blue-300 border-blue-350 border-opacity-50 rounded-lg shadow-x1 p-5 rounded text-x1 font-bold\" to=\"/game_board/llist_api\" name=\"start_game\"> Start Game </Link>"
 
         }
+    }
+*/
+    changeLink = (event) => {
+        this.setState({ [event.target.name]: event.target.value});
     }
 
     
@@ -118,9 +122,21 @@ render(){
 
                     <ul>
                     <li>
-                        <Link className="flex justify-center shadow-xl transition duration-500 ease-in-out bg-blue-500 hover:bg-red-500 transform hover:-translate-y-1 hover:scale-105 bg-blue-300 border-blue-350 border-opacity-50 rounded-lg shadow-xl p-5 rounded text-xl font-bold" to="/game_board" name="start_game">
-                            Start Game
-                        </Link>
+                        {this.state.gameDS === 'AVL' && 
+                            <Link className="flex justify-center shadow-xl transition duration-500 ease-in-out bg-blue-500 hover:bg-red-500 transform hover:-translate-y-1 hover:scale-105 bg-blue-300 border-blue-350 border-opacity-50 rounded-lg shadow-xl p-5 rounded text-xl font-bold" to="/game_board" name="start_game">
+                                Start Game
+                            </Link>
+                        }
+                        {this.state.gameDS === 'LLIST-survival' &&
+                            <Link className="flex justify-center shadow-xl transition duration-500 ease-in-out bg-blue-500 hover:bg-red-500 transform hover:-translate-y-1 hover:scale-105 bg-blue-300 border-blue-350 border-opacity-50 rounded-lg shadow-xl p-5 rounded text-xl font-bold" to="/game_board/llist_api" name="start_game">
+                                Start Game
+                            </Link>
+                        }
+                        {this.state.gameDS === 'LLIST-standard' &&
+                            <Link className="flex justify-center shadow-xl transition duration-500 ease-in-out bg-blue-500 hover:bg-red-500 transform hover:-translate-y-1 hover:scale-105 bg-blue-300 border-blue-350 border-opacity-50 rounded-lg shadow-xl p-5 rounded text-xl font-bold" to="/game_board/llist_api" name="start_game">
+                                Start Game
+                            </Link>
+                        }
                     </li>
                     </ul>
 

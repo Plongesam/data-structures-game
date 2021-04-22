@@ -32,6 +32,7 @@ class LListGameboard extends Component {
       total_food: '',
       time: '',
       numChambers: '',
+      chambers:[],
       total_ants: '',
       total_surface_ants: '',
 
