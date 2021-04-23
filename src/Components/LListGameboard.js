@@ -17,6 +17,10 @@ class LListGameboard extends Component {
   // constructor with default values
   constructor(props) {
     super(props);
+
+    // for accessing variables between components
+    this.llistRef = React.createRef();
+
     this.state = {
       // game settings
       difficulty:null,
@@ -30,6 +34,7 @@ class LListGameboard extends Component {
 
       // in-game stats
       total_food: '',
+      food: [],
       time: '',
       numChambers: '',
       chambers:[],
@@ -60,7 +65,7 @@ class LListGameboard extends Component {
       }
     }
 
-    this.setState({player: players})
+    this.setState({player: cookies.get('playerList')})
 
     // add cookie variables to url
     let createGameURL = url + "game_board/llist_api/start_game/" + difficulty + "/" + players + "/" + ds
@@ -70,20 +75,34 @@ class LListGameboard extends Component {
     //API call to start game
     let response = fetch(createGameURL);
     let game_id = await response.json();
-/*
+
     // save the get request response
     this.setState({ gameID: game_id['game_id']});
     cookies.set('game_id', game_id['game_id'], { path: '/'});
 
     //get request to api and include the dynamic game_id
     response = await fetch(getGameURL + game_id['game_id']);
-    let game_board = await response.json();
+    let game_board = await response.json(); 
 
     //set the state value from json response
-    this.setState({ board: game_board });
-    */
+    // CHANGE TOTAL SURFACE ANTS
+    this.setState({ board: game_board, 
+                    numChambers: game_board['num_chambers'], 
+                    chambers: game_board['chambers'], 
+                    tunnels: game_board['tunnels'], 
+                    total_ants: game_board['num_ants'], 
+                    total_surface_ants: game_board['num_ants'], 
+                    food: game_board['food'],
+                    total_food: game_board['total_food'],
+                    under_attack: game_board['under_attack'], 
 
+                  });
 
+    // update cookie values for stats
+    //cookies.set
+    
+    // everything is loaded
+    this.setState({loading: false,});
   }
 
   // api call to spawn an ant
@@ -153,6 +172,25 @@ class LListGameboard extends Component {
     )
   }
 
+  // this is the react container that renders the chambers
+  // renders the first chamber as long as numChambers >= 1
+  renderChambers = () => {
+
+    return (
+      <div className="chambers">
+        <p>Chambers</p>
+      </div>
+    )
+  }
+
+  renderSurfaceAnts = () => {
+    return (
+      <div className="surfaceAnts">
+        <p>Surface Ants</p>
+      </div>
+    )
+  }
+
   // startHover and endHover are used when mouse is hovering over queen ant 
   startHover = () =>{
     this.setState({hovering: true})
@@ -186,6 +224,11 @@ class LListGameboard extends Component {
         <figure id="egg" style={{background:"White", borderRadius:"50%", height:"50px", width:"30px", position:'absolute', top: '51%', left:'38%', transform:"rotate(300deg)"}} />
         : null
         }
+        {/* checking that state variables are updated in beg of game*/}
+        <p> player: {this.state.player} </p>
+
+        {/* render the chambers here*/}
+
 
       </div>
     );
