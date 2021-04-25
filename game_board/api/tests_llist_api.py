@@ -117,3 +117,100 @@ class StartGame(TestCase):
         sleep(0.2)
         db.remove_game(created_game.data['game_id'])
 
+class GameActions(TestCase):
+    """Tests the API calls that is related to game actions."""
+    """Tests will be expanded upon once create chamber function is implemented"""
+
+    def test_spawn(self):
+        # create a new game
+        created_game = self.client.get('/game_board/llist_api/start_game/Easy/ID1lltest/LLIST')
+        # load the game
+        response = self.client.get('/game_board/llist_api/board/' + str(created_game.data['game_id']))
+        # call spawn ant function
+        response = self.client.get('/game_board/llist_api/spawn_ant/' + str(response.data['game_id']))
+
+        board = response.data
+
+        # make sure there was an error since there isn't enough food
+        self.assertEqual(response.status_code, 400, msg=f'{BColors.FAIL}\t[-]\tResponse was not 400!{BColors.ENDC}')
+        print(f"{BColors.OKGREEN}\t[+]\tPass returning the correct response code.{BColors.ENDC}")
+
+
+        # remove the created game
+        sleep(0.2)
+        db.remove_game(created_game.data['game_id'])
+
+    def test_dig_tunnel(self):
+        # create a new game
+        created_game = self.client.get('/game_board/llist_api/start_game/Easy/ID1lltest/LLIST')
+        # load the game
+        response = self.client.get('/game_board/llist_api/board/' + str(created_game.data['game_id']))
+        # call spawn ant function
+        response = self.client.get('/game_board/llist_api/dig_tunnel/' + str(response.data['game_id']) + '/node1/node2')
+        
+        board = response.data
+
+        # make sure there was an error because nodes do not exist
+        self.assertEqual(response.status_code, 400, msg=f'{BColors.FAIL}\t[-]\tResponse was not 400!{BColors.ENDC}')
+        print(f"{BColors.OKGREEN}\t[+]\tPass returning the correct response code.{BColors.ENDC}")
+
+        # remove the created game
+        sleep(0.2)
+        db.remove_game(created_game.data['game_id'])
+
+    def test_dig_chamber(self):
+        # create a new game
+        created_game = self.client.get('/game_board/llist_api/start_game/Easy/ID1lltest/LLIST')
+        # load the game
+        response = self.client.get('/game_board/llist_api/board/' + str(created_game.data['game_id']))
+        # call spawn ant function
+        response = self.client.get(
+            '/game_board/llist_api/dig_chamber/' + str(response.data['game_id']) + '/node1/no')
+
+        board = response.data
+
+        # make sure there was an error because selected node does not exist
+        self.assertEqual(response.status_code, 400, msg=f'{BColors.FAIL}\t[-]\tResponse was not 400!{BColors.ENDC}')
+        print(f"{BColors.OKGREEN}\t[+]\tPass returning the correct response code.{BColors.ENDC}")
+
+        # remove the created game
+        sleep(0.2)
+        db.remove_game(created_game.data['game_id'])
+
+    def test_fill_chamber(self):
+        # create a new game
+        created_game = self.client.get('/game_board/llist_api/start_game/Easy/ID1lltest/LLIST')
+        # load the game
+        response = self.client.get('/game_board/llist_api/board/' + str(created_game.data['game_id']))
+        # call spawn ant function
+        response = self.client.get(
+            '/game_board/llist_api/fill_chamber/' + str(response.data['game_id']) + '/node1')
+
+        board = response.data
+
+        # make sure there was an error because selected node does not exist
+        self.assertEqual(response.status_code, 400, msg=f'{BColors.FAIL}\t[-]\tResponse was not 400!{BColors.ENDC}')
+        print(f"{BColors.OKGREEN}\t[+]\tPass returning the correct response code.{BColors.ENDC}")
+
+        # remove the created game
+        sleep(0.2)
+        db.remove_game(created_game.data['game_id'])
+
+    def test_forage(self):
+        # create a new game
+        created_game = self.client.get('/game_board/llist_api/start_game/Easy/ID1lltest/LLIST')
+        # load the game
+        response = self.client.get('/game_board/llist_api/board/' + str(created_game.data['game_id']))
+        # call spawn ant function THIS WILL FAIL UNTIL I MEET WITH DAVID
+        response = self.client.get('/game_board/llist_api/forage/' + str(response.data['game_id']) + '/Easy/node1/node1')
+
+        board = response.data
+
+        # make sure there was an error since no chambers are there.
+        self.assertEqual(response.status_code, 400, msg=f'{BColors.FAIL}\t[-]\tResponse was not 400!{BColors.ENDC}')
+        print(f"{BColors.OKGREEN}\t[+]\tPass returning the correct response code.{BColors.ENDC}")
+
+
+        # remove the created game
+        sleep(0.2)
+        db.remove_game(created_game.data['game_id'])
