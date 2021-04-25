@@ -1,5 +1,5 @@
 """
-    API for Game Board that allows interaction with boards.
+    API for Game Board that allows interaction with boards. 
 """
 import json
 import random
