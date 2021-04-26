@@ -111,12 +111,18 @@ class LListGameboard extends Component {
   spawnAnt = async () => {
     this.setState({spawningAnt: true}) // delete this
     // get request to api
-    let spawn_url = url + "game_board/llist_api/spawn_ant/" + this.state.gameID
+    let spawn_url = url + "game_board/llist_api/spawn_ant/" + this.state.board['game_id']
+    this.setState({loading:true});
+
+    // make the API call
     let response = await fetch(spawn_url);
-    let board = await response.json();
+
+    // spawn or dont spawn based on response status
+
+    let game_board = await response.json();
 
     // set state variables 
-    this.setState({board: board})
+    this.setState({board: game_board})
     //this.setState({total_ants: board['total_ants']})
     //this.setState({total_surface_ants: board['total_surface_ants']})
     //this.setState({total_food: board['total_food_types']})
