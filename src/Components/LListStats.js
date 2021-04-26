@@ -2,7 +2,11 @@ import React, { Component } from "react";
 import './LListGameboard.css';
 
 // shows the in  game stats in the upper right corner of game page
-class LListStats extends Component {
+class LListStats extends React.Component {
+  constructor(props) {
+    super(props);
+    this.llistRef = React.createRef();
+  }
 
   render() {
     return (
@@ -24,4 +28,4 @@ class LListStats extends Component {
     )
   }
 }
-export default LListStats
+export default LListStats;
