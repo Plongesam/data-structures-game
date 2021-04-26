@@ -481,7 +481,7 @@ def forage(request, game_id, difficulty, dest):
                         status=status.HTTP_400_BAD_REQUEST)
 
     # If there is no queen then game over actually
-    if !board['queen_at_head']:
+    if board['queen_at_head'] == False:
         return Response({'invalid_action': 'lost queen'},
                         status=status.HTTP_400_BAD_REQUEST)
 
