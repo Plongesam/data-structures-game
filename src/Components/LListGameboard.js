@@ -33,15 +33,17 @@ class LListGameboard extends Component {
       ds: null,
 
       // in-game stats
-      total_food: '',
+      total_food: 0,
       food: [],
-      time: '',
-      numChambers: '',
+      time: 0,
+      numChambers: 0,
       chambers:[],
-      total_ants: '',
-      total_surface_ants: '',
+      total_ants: 0,
+      total_surface_ants: 0,
+      queen: false,
 
       loading: true,
+      initial_load: true,
       spawningAnt: false,
 
     };
@@ -73,9 +75,9 @@ class LListGameboard extends Component {
 
     
     //API call to start game
-    let response = fetch(createGameURL);
-    let game_id = await response.json();
-
+    let response = await fetch(createGameURL);
+    let game_id = await response.json(); 
+    
     // save the get request response
     this.setState({ gameID: game_id['game_id']});
     cookies.set('game_id', game_id['game_id'], { path: '/'});
@@ -86,23 +88,23 @@ class LListGameboard extends Component {
 
     //set the state value from json response
     // CHANGE TOTAL SURFACE ANTS
+    /*
+    tunnels: game_board['tunnels'], 
+    under_attack: game_board['under_attack'], 
+    */
     this.setState({ board: game_board, 
-                    numChambers: game_board['num_chambers'], 
-                    chambers: game_board['chambers'], 
-                    tunnels: game_board['tunnels'], 
-                    total_ants: game_board['num_ants'], 
-                    total_surface_ants: game_board['num_ants'], 
-                    food: game_board['food'],
+                    numChambers: game_board['total_chambers'], 
+                    chambers: game_board['ant_locations'], 
+                    total_ants: game_board['total_ants'], 
+                    total_surface_ants: game_board['total_surface_ants'], 
+                    food: game_board['total_food_types'],
                     total_food: game_board['total_food'],
-                    under_attack: game_board['under_attack'], 
-
+                    queen: game_board['queen_at_head'],
                   });
 
-    // update cookie values for stats
-    //cookies.set
     
     // everything is loaded
-    this.setState({loading: false,});
+    this.setState({loading: false, initial_load: false});
   }
 
   // api call to spawn an ant
@@ -115,9 +117,9 @@ class LListGameboard extends Component {
 
     // set state variables 
     this.setState({board: board})
-    this.setState({total_ants: board['total_ants']})
-    this.setState({total_surface_ants: board['total_surface_ants']})
-    this.setState({total_food: board['total_food_types']})
+    //this.setState({total_ants: board['total_ants']})
+    //this.setState({total_surface_ants: board['total_surface_ants']})
+    //this.setState({total_food: board['total_food_types']})
 
     this.setState({spawningAnt: true}) // keep this, state is set after api call 
     
@@ -224,8 +226,6 @@ class LListGameboard extends Component {
         <figure id="egg" style={{background:"White", borderRadius:"50%", height:"50px", width:"30px", position:'absolute', top: '51%', left:'38%', transform:"rotate(300deg)"}} />
         : null
         }
-        {/* checking that state variables are updated in beg of game*/}
-        <p> player: {this.state.player} </p>
 
         {/* render the chambers here*/}
 
