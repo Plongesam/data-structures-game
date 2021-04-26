@@ -92,7 +92,7 @@ def start_game(request, difficulty, player_ids, data_structures):
 @api_view(['GET'])
 def board(request, game_id):
     """
-    Returns the current game board state.
+    Returns the current game board state. 
 
     :param request:
     :param game_id: unique identifier of the board
