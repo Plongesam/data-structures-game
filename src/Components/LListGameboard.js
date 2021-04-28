@@ -49,6 +49,11 @@ class LListGameboard extends Component {
       spawningAnt: false, // 
       hatchingAnt: false, // false: no egg, true: egg
 
+      // ant action values
+      action: "",
+      action2: "",
+      chamber: "",
+
     };
   }
 
@@ -117,14 +122,14 @@ class LListGameboard extends Component {
     else {
       //this.setState({spawningAnt: true})
       // get request to api
-      let spawn_url = url + "game_board/llist_api/spawn_ant/" + this.state.gameID
+      let spawn_url = url+"game_board/llist_api/spawn_ant/" + this.state.board['game_id']
       this.setState({loading:true});
 
       // make the API call
-      let response = await fetch(spawn_url);
+      let spawn_response = await fetch(spawn_url);
 
       // spawn or dont spawn based on response status
-      let game_board = await response.json();
+      let game_board = await spawn_response.json();
 
       // set state variables
       this.setState({board: game_board})
@@ -150,13 +155,46 @@ class LListGameboard extends Component {
     } 
   };
 
-  handleGo = (event) => {
+  handleGo = async (event) => {
     alert('You have chosen to ' + this.state.action)
     event.preventDefault();
+    const action1 = this.state.action;
+    const action2 = this.state.action2;
+    const action3 = this.state.action3;
+    let action_url = "";
+    // set url based on ant action chosen
+    this.setState({loading:true})
+    
+    switch (this.state.action){
+      case 'Dig Chamber': 
+        action_url = url+"game_board/llist_api/dig_chamber/" + this.state.board['game_id'] + '/' + action2 + '/' + move_ant
+
+      case 'Dig Tunnel': 
+        action_url = url+"game_board/llist_api/dig_tunnel/" + this.state.board['game_id'] + '/' + action2 + '/' + dest
+      
+      case 'Forage': 
+        action_url = url+"game_board/llist_api/forage/" + this.state.board['game_id'] + '/' + this.state.difficulty + '/' + dest
+
+      case 'Move': 
+        action_url = url+"game_board/llist_api/";
+
+      case 'Fill in chamber': 
+        action_url = url+"game_board/llist_api/fill_chamber/" + this.state.board['game_id'] + '/' + action2
+
+    }
+
+
+
   };
 
   handleChange = (event) => {
     this.setState({ [event.target.name]: event.target.value});
+  }
+
+  digChamber = async () => {
+    this.setState({loading:true})
+
+    this.setState({loading:false})
   }
 
   renderChoices= () => {
