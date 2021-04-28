@@ -5,7 +5,7 @@ import Ant from './ant.png';
 class AntComponent extends React.Component {
     render() {
         return (
-            <img id="WorkerAnt" src={Ant} alt="worker ant" width ="130"/>
+            <img id="WorkerAnt" src={Ant} alt="worker ant" style={{width:"110px"}}/>
         );
     }
 }

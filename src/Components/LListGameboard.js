@@ -212,18 +212,14 @@ class LListGameboard extends Component {
 
   renderSurfaceAnts = () => {
     const queen = this.state.queen_at_head
-    // creates an array of AntComponents
+    // creates an array of Ant Components
     var ants=[];
     for(var i = 1; i < this.state.total_surface_ants; i++) {
-      ants.push(<AntComponent/>);
+      ants.push(<Ant/>);
     }
 
     //if (queen) {
-    return (
-    <div className="surfaceAnts">
-      <p>Surface Ants</p>
-    </div>
-    )
+    return ants.map((ant) => <li style={{listStyleType:"none"}}>{ant}</li>);
     //}
   }
 
@@ -245,13 +241,13 @@ class LListGameboard extends Component {
         </div>
 
         {this.state.hovering? 
-        <rect style={{width:"160px", height:"130px", background:"white", opacity:".5", position:"absolute", top:"44%", left:"89px", border:"10px solid rgba(255, 255, 255, .5)", borderRadius:"5px"}}/>
+        <rect style={{width:"160px", height:"130px", background:"white", opacity:".5", position:"absolute", top:"44%", left:"34vh", border:"10px solid rgba(255, 255, 255, .5)", borderRadius:"5px"}}/>
         : null}
         {this.state.hovering? 
-        <p style={{fontSize:"12px", color:"white", position:"absolute", top:"44%", left:"93px"}}>Click to spawn worker ant</p>
+        <p style={{fontSize:"12px", color:"white", position:"absolute", top:"44%", left:"35vh"}}>Click to spawn worker ant</p>
         : null}
         <span >
-          <button ><img id="queenAnt" src={Queen} width ="130" style={{position:'absolute', top: '45.5%', left:'100px', padding:"5px 5px"}} 
+          <button ><img id="queenAnt" src={Queen} width ="130" style={{position:'absolute', top: '45.5%', left:'35vh', padding:"5px 5px"}} 
           onMouseOver ={this.startHover} onMouseOut = {this.endHover}
           onClick={this.spawnAnt}/></button>
         </span>
@@ -260,8 +256,9 @@ class LListGameboard extends Component {
         <figure id="egg" style={{background:"White", borderRadius:"50%", height:"50px", width:"30px", position:'absolute', top: '51%', left:'38%', transform:"rotate(300deg)"}} />
         : null
         }
-        {this.renderSurfaceAnts()}
-
+        <div className="surfaceAnts">
+          {this.renderSurfaceAnts()}
+        </div>
         {/* render the chambers here*/}
 
 
