@@ -3,7 +3,9 @@ import './LListGameboard.css';
 import Stats from './LListStats';
 import Cookies from 'universal-cookie';
 import Queen from './antqueen.png';
-import Ant from './ant.png';
+//import Ant from './ant.png';
+import Ant from './AntComponent';
+import SelectInput from "@material-ui/core/Select/SelectInput";
 
 //this allows us to test separately locally and on Heroku by changing just one line
 const local = "http://127.0.0.1:8000/";
@@ -44,7 +46,8 @@ class LListGameboard extends Component {
 
       loading: true,
       initial_load: true,
-      spawningAnt: false,
+      spawningAnt: false, // 
+      hatchingAnt: false, // false: no egg, true: egg
 
     };
   }
@@ -87,7 +90,6 @@ class LListGameboard extends Component {
     let game_board = await response.json(); 
 
     //set the state value from json response
-    // CHANGE TOTAL SURFACE ANTS
     /*
     tunnels: game_board['tunnels'], 
     under_attack: game_board['under_attack'], 
@@ -109,26 +111,43 @@ class LListGameboard extends Component {
 
   // api call to spawn an ant
   spawnAnt = async () => {
-    this.setState({spawningAnt: true}) // delete this
-    // get request to api
-    let spawn_url = url + "game_board/llist_api/spawn_ant/" + this.state.board['game_id']
-    this.setState({loading:true});
+    if (this.state.spawningAnt == true ){
+      alert('There is already an ant hatching, try again later.')
+    }
+    else {
+      //this.setState({spawningAnt: true})
+      // get request to api
+      let spawn_url = url + "game_board/llist_api/spawn_ant/" + this.state.gameID
+      this.setState({loading:true});
 
-    // make the API call
-    let response = await fetch(spawn_url);
+      // make the API call
+      let response = await fetch(spawn_url);
 
-    // spawn or dont spawn based on response status
+      // spawn or dont spawn based on response status
+      let game_board = await response.json();
 
-    let game_board = await response.json();
+      // set state variables
+      this.setState({board: game_board})
+      this.setState({ 
+        total_ants: game_board['total_ants'], 
+        //total_surface_ants: game_board['total_surface_ants'], 
+        food: game_board['total_food_types'],
+        total_food: game_board['total_food'],
+      });
 
-    // set state variables 
-    this.setState({board: game_board})
-    //this.setState({total_ants: board['total_ants']})
-    //this.setState({total_surface_ants: board['total_surface_ants']})
-    //this.setState({total_food: board['total_food_types']})
+      this.setState({spawningAnt: true}) // keep this, state is set after api call 
+      this.setState({loading:false});
+      
+      // ant hatches after 5 seconds, egg dissappears, update the number of surface ants
+      setTimeout(function() { //Start the timer
+        this.setState({spawningAnt: false}) //After 1 second, set render to true
+      }.bind(this), 5000)
+      //await sleep(5000);
+      //this.setState({spawningAnt: false})
+      this.setState({total_surface_ants: game_board['total_surface_ants']})
+      
 
-    this.setState({spawningAnt: true}) // keep this, state is set after api call 
-    
+    } 
   };
 
   handleGo = (event) => {
@@ -192,11 +211,20 @@ class LListGameboard extends Component {
   }
 
   renderSurfaceAnts = () => {
+    const queen = this.state.queen_at_head
+    // creates an array of AntComponents
+    var ants=[];
+    for(var i = 1; i < this.state.total_surface_ants; i++) {
+      ants.push(<AntComponent/>);
+    }
+
+    //if (queen) {
     return (
-      <div className="surfaceAnts">
-        <p>Surface Ants</p>
-      </div>
+    <div className="surfaceAnts">
+      <p>Surface Ants</p>
+    </div>
     )
+    //}
   }
 
   // startHover and endHover are used when mouse is hovering over queen ant 
@@ -217,13 +245,13 @@ class LListGameboard extends Component {
         </div>
 
         {this.state.hovering? 
-        <rect style={{width:"160px", height:"130px", background:"white", opacity:".5", position:"absolute", top:"44%", left:"27%", border:"10px solid rgba(255, 255, 255, .5)", borderRadius:"5px"}}/>
+        <rect style={{width:"160px", height:"130px", background:"white", opacity:".5", position:"absolute", top:"44%", left:"89px", border:"10px solid rgba(255, 255, 255, .5)", borderRadius:"5px"}}/>
         : null}
         {this.state.hovering? 
-        <p style={{fontSize:"12px", color:"white", position:"absolute", top:"44%", left:"27.5%"}}>Click to spawn worker ant</p>
+        <p style={{fontSize:"12px", color:"white", position:"absolute", top:"44%", left:"93px"}}>Click to spawn worker ant</p>
         : null}
         <span >
-          <button ><img id="queenAnt" src={Queen} width ="130" style={{position:'absolute', top: '45.5%', left:'28%', padding:"5px 5px"}} 
+          <button ><img id="queenAnt" src={Queen} width ="130" style={{position:'absolute', top: '45.5%', left:'100px', padding:"5px 5px"}} 
           onMouseOver ={this.startHover} onMouseOut = {this.endHover}
           onClick={this.spawnAnt}/></button>
         </span>
@@ -232,6 +260,7 @@ class LListGameboard extends Component {
         <figure id="egg" style={{background:"White", borderRadius:"50%", height:"50px", width:"30px", position:'absolute', top: '51%', left:'38%', transform:"rotate(300deg)"}} />
         : null
         }
+        {this.renderSurfaceAnts()}
 
         {/* render the chambers here*/}
 
