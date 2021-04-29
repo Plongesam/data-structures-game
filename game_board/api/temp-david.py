@@ -92,7 +92,7 @@ def start_game(request, difficulty, player_ids, data_structures):
 @api_view(['GET'])
 def board(request, game_id):
     """
-    Returns the current game board state.
+    Returns the current game board state. 
 
     :param request:
     :param game_id: unique identifier of the board
@@ -112,10 +112,10 @@ def board(request, game_id):
 @api_view(['GET'])
 def dig_tunnel(request, game_id, origin, destination):
     """
-    Attempts to dig a tunnel from the requested node to a requested destination
+    Attempts to dig a tunnel from the requested chamber to a requested destination
     :param game_id: unique identifier of the board
-    :param origin: the node that the player wishes to dig from
-    :param destination: the place that the player wishes to dig to (node name, 'surface', or 'none'
+    :param origin: the chamber that the player wishes to dig from
+    :param destination: the place that the player wishes to dig to (chamber name, 'surface', or 'none'
     """
     # Game must exist
     # Load the game board from database
@@ -132,15 +132,15 @@ def dig_tunnel(request, game_id, origin, destination):
 
     # Player must still have dig 'energy' for that day
     if board['time_tracks']['dig_tunnel_track'] == 0:
-        return Response({'invalid_action': 'no dig energy'},
+        return Response({'invalid_action': 'no more dig tunnel moves left!'},
                         status=status.HTTP_400_BAD_REQUEST)
     # Origin must exist
-    if origin is not 'surface' and origin not in board['graph']['node_list']:
+    if origin is not 'surface' and origin not in board['graph']['chamber_list']:
         return Response({'invalid_action': 'origin does not exist'},
                         status=status.HTTP_400_BAD_REQUEST)
 
-    # If destination is NOT 'none', it must exist (node OR surface)
-    if destination is not 'none' and destination not in board['graph']['node_list']:
+    # If destination is NOT 'none', it must exist (chamber OR surface)
+    if destination is not 'none' and destination not in board['graph']['chamber_list']:
         return Response({'invalid_action': 'destination does not exist'},
                         status=status.HTTP_400_BAD_REQUEST)
 
@@ -162,7 +162,7 @@ def dig_tunnel(request, game_id, origin, destination):
         return Response({'invalid_action': 'no ants at destination'},
                         status=status.HTTP_400_BAD_REQUEST)
 
-    # Origin node must NOT already have an exit tunnel
+    # Origin chamber must NOT already have an exit tunnel
     if board['graph']['num_tunnels'][origin]['exit'] is True:
         return Response({'invalid_action': 'exit tunnel exists'},
                             status=status.HTTP_400_BAD_REQUEST)
@@ -199,6 +199,192 @@ def dig_tunnel(request, game_id, origin, destination):
 
     board_response = response_status['game_board']
     return Response(board_response)
+
+@api_view(['GET'])
+def dig_chamber(request, game_id, origin, move_ant):
+    """
+    Attempts to dig a new chamber off of a current dead-end tunnel
+    :param game_id: unique identifier of the board
+    :param origin: the chamber that the player wishes to dig from
+    :param move_ant: whether the player wishes to move the ant into the new chamber
+    """
+    # checklist
+
+    # Check if game exists
+    response_status = utils.load_board_db(game_id)
+    if response_status['error']:
+        return Response({'error': response_status['reason']},
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    board = response_status['game_board']
+
+    # Check for dig chamber energy
+    if board['time_tracks']['dig/fill_chamber'] == 0:
+        return Response({'invalid_action': 'no more dig chamber moves left!'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    # Check if move_ant is a valid input
+    if move_ant is not 'yes':
+        if move_ant is not 'no':
+            return Response({'invalid_action': 'invalid free move request!'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+    # Check if origin exists
+    if origin is not 'surface' and origin not in board['graph']['chamber_list']:
+        return Response({'invalid_action': 'origin does not exist'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    # check if origin contains at least one ant
+    if origin is 'surface' and board['total_surface_ants'] == 0:
+        return Response({'invalid_action': 'no ants on surface'},
+                        status=status.HTTP_400_BAD_REQUEST)
+    if board['graph']['num_ants'][origin] == 0:
+        return Response({'invalid_action': 'no ants at origin'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    # Check if origin contains an exit tunnel
+    if board['graph']['num_tunnels'][origin]['exit'] is False:
+        return Response({'invalid_action': 'no available tunnel from origin'},
+                        status=status.HTTP_400_BAD_REQUEST)
+    # if origin contains a next tunnel, check if current next is 'none'
+    if board['graph']['num_tunnels'][origin]['next'] is not 'none':
+        return Response({'invalid_action': 'no available tunnel from origin'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+
+    # if at this point, dig request is valid: update ALL relevant game board variables
+    board['total_chambers'] += 1
+    chamber_number = str(board['total_chambers'])
+    chamber_id = "chamber" + chamber_number
+
+    board['graph']['chamber_list'].append(chamber_id)
+
+    board['graph']['num_tunnels'][chamber_id]['entrance'] = True
+    board['graph']['num_tunnels'][chamber_id]['exit'] = False
+    board['graph']['num_tunnels'][chamber_id]['next'] = 'none'
+    board['graph']['num_tunnels'][chamber_id]['prev'] = origin
+
+    board['graph']['num_food'][chamber_id] = 0
+
+    if move_ant is 'yes':
+        board['graph']['num_ants'][chamber_id] = 1
+        if origin is not 'surface':
+            board['graph']['num_ants'][origin] -= 1
+        else:
+            board['total_surface_ants'] -= 1
+
+    board['time_tracks']['dig/fill_chamber'] -= 1
+
+
+    user_id = board['player_ids']
+    token = -1
+    # Update the board on database
+    response_status = utils.update_board_db(board, user_id, token)
+    if response_status['error']:
+        return Response({'error': response_status['reason']},
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    board_response = response_status['game_board']
+    return Response(board_response)
+
+
+@api_view(['GET'])
+def fill_chamber(request, game_id, to_fill):
+    """
+    Attempts to 'fill' (delete) a chamber and all associated tunnels
+    :param game_id: unique identifier of the board
+    :param to_fill: the chamber that the player wishes to delete
+    :return game board JSON:
+    """
+
+    # Check if game exists
+    # Load the game board from database
+    response_status = utils.load_board_db(game_id)
+    if response_status['error']:
+        return Response({'error': response_status['reason']},
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    board = response_status['game_board']
+
+    # Check if to_fill is surface (cannot fill in surface)
+    if to_fill is 'surface':
+        return Response({'invalid_action': 'cannot fill in surface'},
+                        status=status.HTTP_400_BAD_REQUEST)
+    # Check if to_fill exists
+    if to_fill not in board['graph']['chamber_list']:
+        return Response({'invalid_action': 'chamber does not exist'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    # Check for fill chamber energy
+    if board['time_tracks']['dig/fill_chamber'] == 0:
+        return Response({'invalid_action': 'no more fill chamber moves left!'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    # Check if to_fill has any food in it
+    if board['graph']['num_food'][to_fill] != 0:
+        return Response({'invalid_action': 'There is food in this chamber!'},
+                        status=status.HTTP_400_BAD_REQUEST)
+    # Check if there is at least one ant at the prev chamber
+    previous = board['graph']['num_tunnels'][to_fill]['prev']
+    if board['graph']['num_ants'][previous] == 0:
+        return Response({'invalid_action': 'No ant in previous chamber!'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    # Check if there is a next chamber, and if so, if there is at least one ant in it
+    if board['graph']['num_tunnels'][to_fill]['next'] is not 'none':
+        next_chamber = board['graph']['num_tunnels'][to_fill]['next']
+        if board['graph']['num_ants'][next_chamber] == 0:
+            return Response({'invalid_action': 'No ant in next chamber!'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+    # If at this point, all checks are made. Update gameboard
+    # link up prev and next
+    if board['graph']['num_tunnels'][to_fill]['next'] is not 'none':
+        next_chamber = board['graph']['num_tunnels'][to_fill]['next']
+        board['graph']['num_tunnels'][previous]['next'] = next_chamber
+        board['graph']['num_tunnels'][next_chamber]['prev'] = previous
+    else:
+        board['graph']['num_tunnels'][previous]['next'] = 'none'
+    # Delete to_fill
+    board['graph']['chamber_list'].remove(to_fill);
+    del board['graph']['num_tunnels'][to_fill]
+    del board['graph']['num_food'][to_fill]
+    del board['graph']['num_ants'][to_fill]
+    del board['graph']['under_attack'][to_fill]
+
+    board['total_chambers'] -= 1
+    board['time_tracks']['dig/fill_chamber'] -= 1
+
+    user_id = board['player_ids']
+    token = -1
+    # Update the board on database
+    response_status = utils.update_board_db(board, user_id, token)
+    if response_status['error']:
+        return Response({'error': response_status['reason']},
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    board_response = response_status['game_board']
+    return Response(board_response)
+
+##### NOTE: THIS IMPLEMENTATION WILL LIKELY CHANGE IN THE NEAR FUTURE
+    #       HOWEVER, GENERAL LOGIC SHOULD STAY THE SAME
+# @api_view(['GET'])
+# def move_ant(request, game_id, origin):
+    """
+    Spawns an ant given the game ID
+    :param game_id: unique identifier of the board
+    :param origin: identifier of an ant on the board
+    :return game board JSON:
+    """
+
+    # Checklist
+    # Check if game exists
+    # Check if origin exists
+    # Check if ant exists in origin
+    # Check if origin has an exit tunnel
+    #   if so, check if origin's exit tunnel leads to a valid destination
+    # Check if destination chamber is under attack
+    #   if so, check to see if ant is carrying food (cannot bring food into attacked chamber)
+
+    # At this point, requested move is valid. Update ALL related gameboard values and return
 
 @api_view(['GET'])
 def spawn_ant(request, game_id):
