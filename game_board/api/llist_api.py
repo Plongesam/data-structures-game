@@ -213,9 +213,6 @@ def dig_tunnel(request, game_id, origin, destination):
 @api_view(['GET'])
 def dig_chamber(request, game_id, origin, move_ant, ant=None):
 
-@api_view(['GET'])
-def dig_chamber(request, game_id, origin, move_ant):
-
     """
     Attempts to dig a new chamber off of a current dead-end tunnel
     :param game_id: unique identifier of the board
