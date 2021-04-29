@@ -5,7 +5,8 @@ import Cookies from 'universal-cookie';
 import Queen from './antqueen.png';
 //import Ant from './ant.png';
 import Ant from './AntComponent';
-import SelectInput from "@material-ui/core/Select/SelectInput";
+import ChamberComponent from './ChamberComponent.js';
+
 
 //this allows us to test separately locally and on Heroku by changing just one line
 const local = "http://127.0.0.1:8000/";
@@ -156,7 +157,7 @@ class LListGameboard extends Component {
   };
 
   handleGo = async (event) => {
-    alert('You have chosen to ' + this.state.action)
+    //alert('You have chosen to ' + this.state.action)
     event.preventDefault();
     const action1 = this.state.action;
     const action2 = this.state.action2;
@@ -166,22 +167,23 @@ class LListGameboard extends Component {
     this.setState({loading:true})
     
     switch (this.state.action){
-      case 'Dig Chamber': 
-        action_url = url+"game_board/llist_api/dig_chamber/" + this.state.board['game_id'] + '/' + action2 + '/' + move_ant
-
-      case 'Dig Tunnel': 
-        action_url = url+"game_board/llist_api/dig_tunnel/" + this.state.board['game_id'] + '/' + action2 + '/' + dest
-      
+      case 'Dig chamber': 
+        action_url = url+"game_board/llist_api/dig_chamber/" + this.state.board['game_id'] + '/' + action2 + '/' //+ move_ant
+        
+      case 'Dig tunnel': 
+        action_url = url+"game_board/llist_api/dig_tunnel/" + this.state.board['game_id'] + '/' + action2 + '/' //+ dest
+        
       case 'Forage': 
-        action_url = url+"game_board/llist_api/forage/" + this.state.board['game_id'] + '/' + this.state.difficulty + '/' + dest
-
+        action_url = url+"game_board/llist_api/forage/" + this.state.board['game_id'] + '/' + this.state.difficulty + '/' //+ dest
+        
       case 'Move': 
         action_url = url+"game_board/llist_api/";
-
+        
       case 'Fill in chamber': 
         action_url = url+"game_board/llist_api/fill_chamber/" + this.state.board['game_id'] + '/' + action2
-
+        
     }
+    alert('You have chosen to ' + this.state.action)
 
 
 
@@ -240,12 +242,17 @@ class LListGameboard extends Component {
   // this is the react container that renders the chambers
   // renders the first chamber as long as numChambers >= 1
   renderChambers = () => {
+    
+    //const queen = this.state.queen_at_head
+    // creates an array of Chamber Components
+    var chamberArr=[];
+    // this will not be 6, should be the number of chambers
+    for(var i = 1; i < 6; i++) {
+      chamberArr.push(<ChamberComponent food={this.state.total_food}/>);
+    }
+  
+    return chamberArr.map((singleChamber) => <li style={{listStyleType:"none"}}>{singleChamber}</li> );
 
-    return (
-      <div className="chambers">
-        <p>Chambers</p>
-      </div>
-    )
   }
 
   renderSurfaceAnts = () => {
@@ -297,7 +304,9 @@ class LListGameboard extends Component {
         <div className="surfaceAnts">
           {this.renderSurfaceAnts()}
         </div>
-        {/* render the chambers here*/}
+        <div className="chambers">
+          {this.renderChambers()}
+        </div>
 
 
       </div>
