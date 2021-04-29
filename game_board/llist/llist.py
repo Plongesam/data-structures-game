@@ -76,7 +76,7 @@ class LList_Handler:
         return outdict
 
     def spawnAnt(self):
-        ant = 'A'+str(len(self.ants.keys())+1)
+        ant = 'A'+str(len(self.ants.keys()))
         self.ants[ant] = {'location': 'surface', 'food_type': None}
 
     def moveAnt(self, ant, destination):

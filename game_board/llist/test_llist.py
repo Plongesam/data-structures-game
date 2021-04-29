@@ -95,3 +95,14 @@ class LlistTests(TestCase):
         action = ['fill_chamber', 'chamber3']
         self.assertRaises(ValueError, doAction(gamestate, action))
 
+    def test_ants(self):
+        gamestate = makeNewGame()
+        action = ['dig_tunnel', 'surface', None]
+        gamestate = doAction(gamestate, action)
+        action = ['dig_chamber', 'surface']
+        gamestate = doAction(gamestate, action)
+        action = ['spawn_ant']
+        gamestate = doAction(gamestate, action)
+        self.assertIn('A1', gamestate['ants'].keys())
+        action = ['move_ant', 'A1', 'chamber1']
+        self.assertEqual(gamestate['ants']['A1']['location'], 'chamber1')
