@@ -128,7 +128,7 @@ def dig_tunnel(request, game_id, origin, destination):
     board = response_status['game_board']
 
     # origin and destination MUST be different
-    if origin is destination:
+    if origin == destination:
         return Response({'invalid_action': 'origin cannot match destination'},
                         status=status.HTTP_400_BAD_REQUEST)
 
@@ -137,7 +137,7 @@ def dig_tunnel(request, game_id, origin, destination):
         return Response({'invalid_action': 'no more dig tunnel moves left!'},
                         status=status.HTTP_400_BAD_REQUEST)
     # Origin must exist
-    if origin is not 'surface' and origin not in board['graph']['chambers']:
+    if origin != 'surface' and origin not in board['graph']['chambers']:
         return Response({'invalid_action': 'origin does not exist'},
                         status=status.HTTP_400_BAD_REQUEST)
 
@@ -147,12 +147,12 @@ def dig_tunnel(request, game_id, origin, destination):
                         status=status.HTTP_400_BAD_REQUEST)
 
     # If Origin is surface, colony_entrance MUST be False
-    if origin is 'surface' and board['colony_entrance'] is True:
+    if origin == 'surface' and board['colony_entrance'] == True:
         return Response({'invalid_action': 'colony_entrance already exists'},
                         status=status.HTTP_400_BAD_REQUEST)
 
     # There must be at least one ant at origin
-    if origin is 'surface' and board['total_surface_ants'] == 0:
+    if origin == 'surface' and board['total_surface_ants'] == 0:
         return Response({'invalid_action': 'no ants on surface'},
                         status=status.HTTP_400_BAD_REQUEST)
     if board['graph']['num_ants'][origin] == 0:
@@ -179,9 +179,9 @@ def dig_tunnel(request, game_id, origin, destination):
     # num_tunnels
     board['graph'] = doAction(board['graph'], ('dig_tunnel', origin, destination))
 
-    if origin is 'surface':
+    if origin == 'surface':
         board['colony_entrance'] = True
-    if destination is 'surface':
+    if destination == 'surface':
         board['colony_exit'] = True
 
     board['time_tracks']['dig_tunnel_track'] -= 1
@@ -222,18 +222,18 @@ def dig_chamber(request, game_id, origin, move_ant, ant=None):
                         status=status.HTTP_400_BAD_REQUEST)
 
     # Check if move_ant is a valid input
-    if move_ant is not 'yes':
-        if move_ant is not 'no':
+    if move_ant != 'yes':
+        if move_ant != 'no':
             return Response({'invalid_action': 'invalid free move request!'},
                             status=status.HTTP_400_BAD_REQUEST)
 
     # Check if origin exists
-    if origin is not 'surface' and origin not in board['graph']['chambers']:
+    if origin != 'surface' and origin not in board['graph']['chambers']:
         return Response({'invalid_action': 'origin does not exist'},
                         status=status.HTTP_400_BAD_REQUEST)
 
     # check if origin contains at least one ant
-    if origin is 'surface' and board['total_surface_ants'] == 0:
+    if origin == 'surface' and board['total_surface_ants'] == 0:
         return Response({'invalid_action': 'no ants on surface'},
                         status=status.HTTP_400_BAD_REQUEST)
     if board['graph']['num_ants'][origin] == 0:
@@ -253,7 +253,7 @@ def dig_chamber(request, game_id, origin, move_ant, ant=None):
     newchamberid = 'chamber' + str(len(board['graph']['chambers']) + 1)
     board['graph'] = doAction(board['graph'], ('dig_chamber', origin))
 
-    if move_ant is 'yes' and ant is not None:
+    if move_ant == 'yes' and ant is not None:
         board['graph'] = doAction(board['graph'], ('move_ant', ant, newchamberid))
 
     board['time_tracks']['dig/fill_chamber'] -= 1
@@ -288,7 +288,7 @@ def fill_chamber(request, game_id, to_fill):
     board = response_status['game_board']
 
     # Check if to_fill is surface (cannot fill in surface)
-    if to_fill is 'surface':
+    if to_fill == 'surface':
         return Response({'invalid_action': 'cannot fill in surface'},
                         status=status.HTTP_400_BAD_REQUEST)
     # Check if to_fill exists
@@ -404,7 +404,8 @@ def spawn_ant(request, game_id):
     # if control reaches here, then spawning an ant is successful. Update both total and surface ant values.
     board['total_ants'] += 1
     board['total_surface_ants'] += 1
-    board['graph'] = doAction(board['graph'], tuple('spawn_ant'))
+    action = ['spawn_ant']
+    board['graph'] = doAction(board['graph'], action)
 
     user_id = board['player_ids']
     token = -1
