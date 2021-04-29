@@ -214,7 +214,6 @@ def new_board(difficulty, player_ids, data_structures):
         board = {
             'game_id': str(uuid.uuid1()),
             'graph': graph,
-            'ant_locations': [],
             'queen_at_head': True,
             'colony_exit': False,
             'colony_entrance': False,
