@@ -26,12 +26,12 @@ def api_overview(request):
     """
     api_urls = {
         'Start Game': '/start_game/<str:difficulty>/<str:player_ids>/<str:data_structures>',
-        'Game Board': '/board/<str:id>',
-        'Dig Tunnel': '/dig_tunnel/<str:id>/<str:origin>/<str:destination>',
-        'Dig Chamber': '/dig_chamber/<str:id>/<str:origin>/<str:move_ant>',
-        'Fill Chamber': '/fill_chamber/<str:id>/<str:origin>/<str:to_fill>',
-        'Spawn Ant': '/spawn_ant/<str:id>',
-        'Forage': '/forage/<str:id>/<str:difficulty>/<str:dest>',
+        'Game Board': '/board/<str:game_id>',
+        'Dig Tunnel': '/dig_tunnel/<str:game_id>/<str:origin>/<str:destination>',
+        'Dig Chamber': '/dig_chamber/<str:game_id>/<str:origin>/<str:move_ant>',
+        'Fill Chamber': '/fill_chamber/<str:game_id>/<str:origin>/<str:to_fill>',
+        'Spawn Ant': '/spawn_ant/<str:game_id>',
+        'Forage': '/forage/<str:game_id>/<str:difficulty>/<str:dest>',
     }
     return Response(api_urls)
 
