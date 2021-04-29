@@ -247,7 +247,7 @@ class LListGameboard extends Component {
     // creates an array of Chamber Components
     var chamberArr=[];
     
-    //for(var i = 1; i < 2; i++) {  //UNCOMMENT THIS LINE FOR TESTING, should be commenting when running the game normally
+    //for(var i = 1; i < 3; i++) {  //UNCOMMENT THIS LINE FOR TESTING, should be commenting when running the game normally
     for(var i = 1; i < this.state.total_surface_ants; i++) {  //COMMENT THIS LINE OUT FOR TESTING
       chamberArr.push(<ChamberComponent food={this.state.total_food}/>);
     }
