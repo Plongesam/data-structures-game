@@ -90,6 +90,8 @@ def profile(request):
         'current_story_level': user_profile_data['current_story_level'],
         'friends': user_profile_data['friends'],
         'points': round(user_profile_data['points'], 2),
+        'llistStandardPoints': round(user_profile_date['llistStandardPoints'], 2)
+        'llistSurvivalPoints': round(user_profile_date['llistSurivalPoints'], 2)
         'rank': user_profile_data['rank'],
         'saved_games': game_board_info
     }

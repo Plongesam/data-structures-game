@@ -224,6 +224,8 @@ def create_user(user_id : str, passhash : str, email : str, token : str):
     "current_story_level":1,
     "friends":[],
     "points":0,
+    "llistStandardPoints":0,
+    "llistSurvivalPoints":0,
     "rank":"Baby Panda",
     "save_games":[],
     "sharing": True,

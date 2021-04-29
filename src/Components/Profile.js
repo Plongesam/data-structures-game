@@ -46,6 +46,8 @@ class Profile extends Component {
             loggedIn: prevLogin,
             user_name: null,
             user_points: null,
+            user_llistStandardPoints: null,
+            user_llistSurvivalPoints: null,
             user_rank: null,
             user_games: null,
             show_profile: false,
@@ -537,8 +539,18 @@ class Profile extends Component {
                         <div class="flex justify-center pb-3 text-grey-dark">
                             <div class="text-center mr-3 border-r pr-3">
                                 <h2 className="space-y-5 text-md text-center font-semibold text-gray-800 mb-2">{this.state.show_profile && this.state.user_points}</h2>
-                                <span>Total Points</span>
+                                <span>AVL Points</span>
                             </div>
+                            <div class ="text-center">
+                                <h2 className="space-y-5 text-md text-center font-semibold text-gray-800 mb-2">{this.state.show_profile && this.state.llistStandardPoints}</h2>
+                                <span>Linked List Standard Points</span>
+                            </div>
+                            <div class ="text-center">
+                                <h2 className="space-y-5 text-md text-center font-semibold text-gray-800 mb-2">{this.state.show_profile && this.state.user_llistSurvivalPoints}</h2>
+                                <span>Linked List Survival Points</span>
+                            </div>
+
+
                             <div class="text-center">
                                 <h2 className="space-y-5 text-md text-center font-semibold text-gray-800 mb-2">#{this.state.show_profile && this.state.user_rank}</h2>
                                 <span>Ranking</span>
@@ -592,6 +604,8 @@ class Profile extends Component {
                 user_games: returned["user_profile"]["saved_games"],
                 user_name: returned["user_profile"]["user_name"],
                 user_points: returned["user_profile"]["points"],
+                user_llistStandardPoints: returned["user_profile"]["llistStandardPoints"],
+                user_llistSurivalPoints: returned["user_profile"]["llistSurvivalPoints"],
                 user_rank: returned["user_profile"]["rank"]},
                 () => { this.updateProfile();
             })
