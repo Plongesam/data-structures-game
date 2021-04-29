@@ -392,7 +392,7 @@ def lose_state_llist(board):
         return True
     else:
         for chamber in board['graph']['chambers']:
-            if (board['graph']['tunnels'][chamber][1][0] != 'Head') or (board['graph']['tunnels'][chamber][1][0]
+            if (board['graph']['tunnels'][chamber][1] != 'surface') or (board['graph']['tunnels'][chamber][1]
                                                                         not in board['graph']['chambers']):
                 return True
         return False
