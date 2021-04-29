@@ -176,6 +176,13 @@ class GameActions(TestCase):
         self.assertEqual(response.status_code, 400, msg=f'{BColors.FAIL}\t[-]\tResponse was not 400!{BColors.ENDC}')
         print(f"{BColors.OKGREEN}\t[+]\tPass returning the correct response code.{BColors.ENDC}")
 
+        response = self.client.get('/game_board/llist_api/dig_tunnel/' + str(created_game.data['game_id']) + '/surface/none')
+        
+        board = response.data
+
+        self.assertTrue(board['colony_entrance'], msg=f'{BColors.FAIL}\t[-]\tColony entrance was not made!{BColors.ENDC}')
+        print(f"{BColors.OKGREEN}\t[+]\tPass making colony entrance.{BColors.ENDC}")
+
         # remove the created game
         sleep(0.2)
         db.remove_game(created_game.data['game_id'])
