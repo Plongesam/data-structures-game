@@ -20,10 +20,10 @@ class ChamberComponent extends React.Component {
 
     render() {
         return (
-            <button style={{width:"400px", height:"300px", backgroundColor:"#5f5449", border:"5px solid #5f5449", marginRight:"200px", borderRadius:"50px" }}
-                onMouseEnter={this.showFood} onMouseLeave={this.hideFood}>
+            <button id='chamberButton' style={{width:"400px", height:"300px", backgroundColor:"#5f5449", border:"5px solid #5f5449", marginRight:"200px", borderRadius:"50px" }}
+                onClick={this.showFood} onMouseLeave={this.hideFood}>
                 {this.state.showFood &&
-                    <div style={{width:"390px", height:"290px", background:"white", opacity:".2", border:"5px solid transparent", marginRight:"200px", borderRadius:"50px"}}>
+                    <div name="chamberFoodUI" style={{width:"390px", height:"290px", background:"white", opacity:".2", border:"5px solid rgba(255, 255, 255, .2) ", marginRight:"200px", borderRadius:"45px"}}>
                         Showing Food
                      </div>}
 

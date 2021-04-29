@@ -205,7 +205,7 @@ class LListGameboard extends Component {
         <form onSubmit={this.handleGo}>
           <p style={{margin:"0", padding:"0", color:'#5f5449', fontSize:"30px"}}>ANT ACTIONS MENU</p>
           <div style={{display:"flex", flexDirection:"row", justifyContent:"flex-start"}}>
-            <select value={this.state.action} onChange={this.handleChange} name='action' >
+            <select value={this.state.action} onChange={this.handleChange} name='action' style={{marginRight:"10px"}} >
               <option value="">Choose Action...</option>
               <option value="Dig chamber">Dig Chamber</option>
               <option value="Dig tunnel">Dig Tunnel</option>
@@ -214,7 +214,7 @@ class LListGameboard extends Component {
               <option value="Fill in chamber">Fill Chamber</option>
             </select>
             
-            <select value={this.state.action2} onChange={this.handleChange} name='action2'>
+            <select value={this.state.action2} onChange={this.handleChange} name='action2' style={{marginRight:"10px"}}>
               {this.state.action === 'Dig chamber' &&
                 <option value="tunnel">Choose Tunnel...</option> }
               {this.state.action === 'Dig tunnel' &&
@@ -228,7 +228,7 @@ class LListGameboard extends Component {
                 <option value="chamber">Choose chamber...</option> }
             </select>
             {this.state.action === 'Move' &&
-              <select value={this.state.chamber} onChange={this.handleChange} name='move_to_chamber'>
+              <select value={this.state.chamber} onChange={this.handleChange} name='move_to_chamber' style={{marginRight:"10px"}}>
                 <option value="chamber">Choose Chamber...</option> 
               </select>}
 
@@ -243,11 +243,12 @@ class LListGameboard extends Component {
   // renders the first chamber as long as numChambers >= 1
   renderChambers = () => {
     
-    //const queen = this.state.queen_at_head
+    const queen = this.state.queen_at_head
     // creates an array of Chamber Components
     var chamberArr=[];
-    // this will not be 6, should be the number of chambers
-    for(var i = 1; i < 6; i++) {
+    
+    //for(var i = 1; i < 2; i++) {  //UNCOMMENT THIS LINE FOR TESTING, should be commenting when running the game normally
+    for(var i = 1; i < this.state.total_surface_ants; i++) {  //COMMENT THIS LINE OUT FOR TESTING
       chamberArr.push(<ChamberComponent food={this.state.total_food}/>);
     }
   
