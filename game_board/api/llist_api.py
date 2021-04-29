@@ -25,12 +25,12 @@ def api_overview(request):
     """
     api_urls = {
         'Start Game': '/start_game/<str:difficulty>/<str:player_ids>/<str:data_structures>',
-        'Game Board': '/board/<str:id>',
-        'Dig Tunnel': '/dig_tunnel/<str:id>/<str:origin>/<str:destination>',
-        'Dig Chamber': '/dig_chamber/<str:id>/<str:origin>/<str:move_ant>',
-        'Fill Chamber': '/fill_chamber/<str:id>/<str:origin>/<str:to_fill>',
-        'Spawn Ant': '/spawn_ant/<str:id>',
-        'Forage': '/forage/<str:id>/<str:difficulty>/<str:dest>',
+        'Game Board': '/board/<str:game_id>',
+        'Dig Tunnel': '/dig_tunnel/<str:game_id>/<str:origin>/<str:destination>',
+        'Dig Chamber': '/dig_chamber/<str:game_id>/<str:origin>/<str:move_ant>',
+        'Fill Chamber': '/fill_chamber/<str:game_id>/<str:origin>/<str:to_fill>',
+        'Spawn Ant': '/spawn_ant/<str:game_id>',
+        'Forage': '/forage/<str:game_id>/<str:difficulty>/<str:dest>',
     }
     return Response(api_urls)
 
@@ -140,22 +140,22 @@ def dig_tunnel(request, game_id, origin, destination):
         return Response({'invalid_action': 'no more dig tunnel moves left!'},
                         status=status.HTTP_400_BAD_REQUEST)
     # Origin must exist
-    if origin is not 'surface' and origin not in board['graph']['chamber_list']:
+    if origin != 'surface' and origin not in board['graph']['chamber_list']:
         return Response({'invalid_action': 'origin does not exist'},
                         status=status.HTTP_400_BAD_REQUEST)
 
     # If destination is NOT 'none', it must exist (chamber OR surface)
-    if destination is not 'none' and destination not in board['graph']['chamber_list']:
+    if destination != 'none' and destination not in board['graph']['chamber_list']:
         return Response({'invalid_action': 'destination does not exist'},
                         status=status.HTTP_400_BAD_REQUEST)
 
     # If Origin is surface, colony_entrance MUST be False
-    if origin is 'surface' and board['colony_entrance'] is True:
+    if origin == 'surface' and board['colony_entrance'] is True:
         return Response({'invalid_action': 'colony_entrance already exists'},
                         status=status.HTTP_400_BAD_REQUEST)
 
     # There must be at least one ant at origin
-    if origin is 'surface' and board['total_surface_ants'] == 0:
+    if origin == 'surface' and board['total_surface_ants'] == 0:
         return Response({'invalid_action': 'no ants on surface'},
                         status=status.HTTP_400_BAD_REQUEST)
     if board['graph']['num_ants'][origin] == 0:
@@ -163,17 +163,17 @@ def dig_tunnel(request, game_id, origin, destination):
                         status=status.HTTP_400_BAD_REQUEST)
 
     # If destination is NOT none, there must be an ant at the destination
-    if destination is not 'none' and board['graph']['num_ants'][destination] == 0:
+    if destination != 'none' and board['graph']['num_ants'][destination] == 0:
         return Response({'invalid_action': 'no ants at destination'},
                         status=status.HTTP_400_BAD_REQUEST)
 
     # Origin chamber must NOT already have an exit tunnel
-    if board['graph']['num_tunnels'][origin]['exit'] is True:
+    if board['graph']['num_tunnels'][origin]['exit'] == True:
         return Response({'invalid_action': 'exit tunnel exists'},
                             status=status.HTTP_400_BAD_REQUEST)
 
     # destination must NOT already have an entrance tunnel
-    if destination is not 'none' and board['graph']['num_tunnels'][destination]['entrance'] is True:
+    if destination != 'none' and board['graph']['num_tunnels'][destination]['entrance'] == True:
         return Response({'invalid_action': 'exit tunnel exists'},
                             status=status.HTTP_400_BAD_REQUEST)
 
@@ -182,13 +182,13 @@ def dig_tunnel(request, game_id, origin, destination):
     # num_tunnels
     board['graph']['num_tunnels'][origin]['exit'] = True
     board['graph']['num_tunnels'][origin]['next'] = destination
-    if destination is not 'none':
+    if destination != 'none':
         board['graph']['num_tunnels'][destination]['entrance'] = True
 
 
-    if origin is 'surface':
+    if origin == 'surface':
         board['colony_entrance'] = True
-    if destination is 'surface':
+    if destination == 'surface':
         board['colony_exit'] = True
 
     board['time_tracks']['dig_tunnel_track'] -= 1
@@ -228,18 +228,18 @@ def dig_chamber(request, game_id, origin, move_ant):
                         status=status.HTTP_400_BAD_REQUEST)
 
     # Check if move_ant is a valid input
-    if move_ant is not 'yes':
-        if move_ant is not 'no':
+    if move_ant != 'yes':
+        if move_ant != 'no':
             return Response({'invalid_action': 'invalid free move request!'},
                             status=status.HTTP_400_BAD_REQUEST)
 
     # Check if origin exists
-    if origin is not 'surface' and origin not in board['graph']['chamber_list']:
+    if origin != 'surface' and origin not in board['graph']['chamber_list']:
         return Response({'invalid_action': 'origin does not exist'},
                         status=status.HTTP_400_BAD_REQUEST)
 
     # check if origin contains at least one ant
-    if origin is 'surface' and board['total_surface_ants'] == 0:
+    if origin == 'surface' and board['total_surface_ants'] == 0:
         return Response({'invalid_action': 'no ants on surface'},
                         status=status.HTTP_400_BAD_REQUEST)
     if board['graph']['num_ants'][origin] == 0:
@@ -247,11 +247,11 @@ def dig_chamber(request, game_id, origin, move_ant):
                         status=status.HTTP_400_BAD_REQUEST)
 
     # Check if origin contains an exit tunnel
-    if board['graph']['num_tunnels'][origin]['exit'] is False:
+    if board['graph']['num_tunnels'][origin]['exit'] == False:
         return Response({'invalid_action': 'no available tunnel from origin'},
                         status=status.HTTP_400_BAD_REQUEST)
     # if origin contains a next tunnel, check if current next is 'none'
-    if board['graph']['num_tunnels'][origin]['next'] is not 'none':
+    if board['graph']['num_tunnels'][origin]['next'] != 'none':
         return Response({'invalid_action': 'no available tunnel from origin'},
                         status=status.HTTP_400_BAD_REQUEST)
 
@@ -270,9 +270,9 @@ def dig_chamber(request, game_id, origin, move_ant):
 
     board['graph']['num_food'][chamber_id] = 0
 
-    if move_ant is 'yes':
+    if move_ant == 'yes':
         board['graph']['num_ants'][chamber_id] = 1
-        if origin is not 'surface':
+        if origin != 'surface':
             board['graph']['num_ants'][origin] -= 1
         else:
             board['total_surface_ants'] -= 1
@@ -310,7 +310,7 @@ def fill_chamber(request, game_id, to_fill):
     board = response_status['game_board']
 
     # Check if to_fill is surface (cannot fill in surface)
-    if to_fill is 'surface':
+    if to_fill == 'surface':
         return Response({'invalid_action': 'cannot fill in surface'},
                         status=status.HTTP_400_BAD_REQUEST)
     # Check if to_fill exists
@@ -334,7 +334,7 @@ def fill_chamber(request, game_id, to_fill):
                         status=status.HTTP_400_BAD_REQUEST)
 
     # Check if there is a next chamber, and if so, if there is at least one ant in it
-    if board['graph']['num_tunnels'][to_fill]['next'] is not 'none':
+    if board['graph']['num_tunnels'][to_fill]['next'] != 'none':
         next_chamber = board['graph']['num_tunnels'][to_fill]['next']
         if board['graph']['num_ants'][next_chamber] == 0:
             return Response({'invalid_action': 'No ant in next chamber!'},
@@ -342,7 +342,7 @@ def fill_chamber(request, game_id, to_fill):
 
     # If at this point, all checks are made. Update gameboard
     # link up prev and next
-    if board['graph']['num_tunnels'][to_fill]['next'] is not 'none':
+    if board['graph']['num_tunnels'][to_fill]['next'] != 'none':
         next_chamber = board['graph']['num_tunnels'][to_fill]['next']
         board['graph']['num_tunnels'][previous]['next'] = next_chamber
         board['graph']['num_tunnels'][next_chamber]['prev'] = previous
