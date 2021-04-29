@@ -31,37 +31,37 @@ class LList_Handler:
         if dest is not None and dest not in self.chambers and dest != 'surface':
             raise ValueError
         if self.tunnels[chamber][0] < 2:
-            self.tunnels[chamber] += 1
-        self.tunnels[chamber][1][1] = dest
+            self.tunnels[chamber][0] += 1
+        self.tunnels[chamber][2] = dest
         if dest is not None:
-            self.tunnels[dest][1][0] = chamber
+            self.tunnels[dest][1] = chamber
 
     def digChamber(self, connecting_chbr):
         if connecting_chbr is not None:
-            if connecting_chbr not in self.chambers:
+            if connecting_chbr not in self.chambers and connecting_chbr != 'surface':
                 raise ValueError
         self.num_chambers += 1
         newchamberID = "chamber" + str(len(self.chambers)+1)
         self.chambers.append(newchamberID)
         self.num_ants[newchamberID] = 0
-        if self.tunnels[connecting_chbr][0] == 2:
-            self.tunnels[newchamberID] = [1, [connecting_chbr, None]]
-            self.tunnels[connecting_chbr][1][1] = newchamberID
-            self.under_attack[newchamberID] = False
-            self.food[newchamberID] = {'crumb': 0, 'berry': 0, 'donut': 0}
+        self.tunnels[newchamberID] = [1, connecting_chbr, None]
+        self.tunnels[connecting_chbr][2] = newchamberID
+        self.under_attack[newchamberID] = False
+        self.food[newchamberID] = {'crumb': 0, 'berry': 0, 'donut': 0}
 
     def fillTunnel(self, chamber):
         if chamber in self.chambers:
-            if self.tunnels[chamber][0] == 2:
-                self.tunnels[chamber] -= 1
-                self.tunnels[self.tunnels[chamber][1][1]][1][0] = None
-                self.tunnels[chamber][1][1] = None
+            self.tunnels[chamber][0] -= 1
+            if self.tunnels[chamber][2] is not None:
+                self.tunnels[self.tunnels[chamber][2]][1] = None
+                self.tunnels[self.tunnels[chamber][2]][0] -= 1
+                self.tunnels[chamber][2] = None
         else:
             raise ValueError
 
     def fillChamber(self, chamber):
         if chamber in self.chambers:
-            self.tunnels[self.tunnels[chamber][1][0]][1][1] = None
+            self.tunnels[self.tunnels[chamber][1]][2] = None
             self.tunnels.pop(chamber)
             self.num_ants.pop(chamber)
             self.chambers.remove(chamber)

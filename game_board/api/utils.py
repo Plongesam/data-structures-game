@@ -114,7 +114,7 @@ def update_board_db(board, user_id='-1', token='-1'):
                 _ = db.update_game(board['game_id'], board)
 
                 # hide the UID used by data structure backend from user
-                del board['graph']['uid']
+                # del board['graph']['uid']
 
                 # Update
                 result['game_board'] = board
@@ -392,7 +392,7 @@ def lose_state_llist(board):
         return True
     else:
         for chamber in board['graph']['chambers']:
-            if (board['graph']['tunnels'][chamber][1][0] != 'Head') or (board['graph']['tunnels'][chamber][1][0]
+            if (board['graph']['tunnels'][chamber][1] != 'surface') or (board['graph']['tunnels'][chamber][1]
                                                                         not in board['graph']['chambers']):
                 return True
         return False
