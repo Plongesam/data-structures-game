@@ -61,8 +61,8 @@ class Rankings(TestCase):
         self.assertEqual(n, 2, msg=f'{BColors.FAIL}\t[-]\tWrong number of players returned!{BColors.ENDC}')
         print(f"{BColors.OKGREEN}\t[+]\tPass returning correct number of players{BColors.ENDC}")
 
-        first_player = top_n_players[0]['points']
-        second_player = top_n_players[1]['points']
+        first_player = top_n_players[0]['points']['llistStandardPoints']['llistSurvivalPoints']
+        second_player = top_n_players[1]['points']['llistStandardPoints']['llistSurvivalPoints']
 
         self.assertEquals(first_player >= second_player, True,  msg=f'{BColors.FAIL}\t[-]\tWrong ordering!{BColors.ENDC}')
         print(f"{BColors.OKGREEN}\t[+]\tPass returning correct ordering of players{BColors.ENDC}")

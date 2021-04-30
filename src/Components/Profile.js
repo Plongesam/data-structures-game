@@ -541,11 +541,11 @@ class Profile extends Component {
                                 <h2 className="space-y-5 text-md text-center font-semibold text-gray-800 mb-2">{this.state.show_profile && this.state.user_points}</h2>
                                 <span>AVL Points</span>
                             </div>
-                            <div class ="text-center">
+                            <div class ="text-center mr-6 border-r pr-6">
                                 <h2 className="space-y-5 text-md text-center font-semibold text-gray-800 mb-2">{this.state.show_profile && this.state.llistStandardPoints}</h2>
                                 <span>Linked List Standard Points</span>
                             </div>
-                            <div class ="text-center">
+                            <div class ="text-center mr-9 border-r pr-9">
                                 <h2 className="space-y-5 text-md text-center font-semibold text-gray-800 mb-2">{this.state.show_profile && this.state.user_llistSurvivalPoints}</h2>
                                 <span>Linked List Survival Points</span>
                             </div>

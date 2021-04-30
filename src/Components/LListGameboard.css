@@ -93,3 +93,14 @@
   min-width: 1000px;
   min-height: 200px;
 }
+
+.tunnels{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  position: absolute;
+  top: 80%;
+  left: 900px;
+  min-width: 1000px;
+  min-height: 200px;
+}

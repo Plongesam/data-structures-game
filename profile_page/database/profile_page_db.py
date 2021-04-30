@@ -512,6 +512,26 @@ def get_points(user_id: str):
 
     return value_returned["points"]
 
+def get_llistStandard_points(user_id: str):
+    value_returned = client.InitialDB.User_Profile.find_one({ "user_id": user_id},
+    {'_id':0, 'llistStandardPoints':1}
+    )
+
+    if value_returned is None:
+        return False
+
+    return value_returned["llistStandardPoints"]
+
+def get_llistSurvival_points(user_id: str):
+    value_returned = client.InitialDB.User_Profile.find_one({ "user_id": user_id},
+    {'_id':0, 'llistSurvivalPoints':1}
+    )
+
+    if value_returned is None:
+        return false
+
+    return value_returned["llistSurvivalPoints"]
+
 def set_points(user_id: str, new_points: int):
     """
     Allows an active user's points to be updated in the database

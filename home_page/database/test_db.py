@@ -28,7 +28,7 @@ class DBRankings( TestCase ):
         "current_story_level":9,"email":"ryanb777@umbc.edu",
         "friends":["Kulsoom2","Nick2","Maksim2","Naomi2"],
         "user_name":"ryan2","password_hash":"well,hello there",
-        "points":9829999999974,"rank":"diamond",
+        "points":9829999999974,"llistStandardPoints":982999999975, "llistSurvivalPoints":9829999999976, "rank":"diamond",
         "save_games":["4(2(3)(no))(6(5))","4(2(3)(1))(6(5))","4(2(3)(1))(6(5))"]}
 
         mongo2.save_user( self.user )
