@@ -214,6 +214,41 @@ class LListGameboard extends Component {
     this.setState({loading:false})
   }
 
+  // renders the second select drop down options in ant actions:
+  // the options change based on the first option choice
+  dropDownOptions = () => {
+    var optionList=[];
+    //this.state.total_chambers
+    if (this.state.action === 'Dig chamber') {
+      var num = 0
+    }
+    else if (this.state.action === 'Dig tunnel'){
+      var num = this.state.numChambers
+    }
+    else if (this.state.action === 'Forage'){
+      var num = this.state.total_surface_ants
+    }
+    else if (this.state.action === 'Move'){
+      var num = this.state.total_surface_ants
+    }
+    else if (this.state.action === 'Fill in chamber'){
+      var num = this.state.numChambers
+    }
+    for(var i = 1; i < num; i++) {
+      optionList.push(i);
+    }
+    let dropDown = num > 0 && optionList.map((item, i) => {
+	    return ( <option value={i}>{i}</option> )
+	  }, this);
+
+	  return (
+
+		  <select value={this.state.action2} onChange={this.handleChange} name='action2' style={{marginRight:"10px"}}>
+			  {dropDown}
+		  </select>
+    );
+  }
+
   renderChoices= () => {
     return (
       <div className="choices">
@@ -229,19 +264,8 @@ class LListGameboard extends Component {
               <option value="Fill in chamber">Fill Chamber</option>
             </select>
             
-            <select value={this.state.action2} onChange={this.handleChange} name='action2' style={{marginRight:"10px"}}>
-              {this.state.action === 'Dig chamber' &&
-                <option value="tunnel">Choose Tunnel...</option> }
-              {this.state.action === 'Dig tunnel' &&
-                <option value="chamber">Choose chamber...</option>
-                }
-              {this.state.action === 'Forage' &&
-                <option value="ant">Choose ant...</option> }
-              {this.state.action === 'Move' &&
-                <option value="ant">Choose ant...</option> }
-              {this.state.action === 'Fill in chamber' &&
-                <option value="chamber">Choose chamber...</option> }
-            </select>
+            {this.dropDownOptions()}
+
             {this.state.action === 'Move' &&
               <select value={this.state.chamber} onChange={this.handleChange} name='move_to_chamber' style={{marginRight:"10px"}}>
                 <option value="chamber">Choose Chamber...</option> 
@@ -270,11 +294,12 @@ class LListGameboard extends Component {
     return chamberArr.map((singleChamber) => <li style={{listStyleType:"none"}}>{singleChamber}</li> );
 
   }
+
   renderTunnels = () => {
     const queen = this.state.queen_at_head
     var tunnelArr=[];
 
-    for(var i = 1; i < 3; i++) {
+    for(var i = 1; i < 1; i++) { // this.state.numTunnels 
       tunnelArr.push(<TunnelComponet/>);
     }
 
