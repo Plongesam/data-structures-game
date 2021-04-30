@@ -6,6 +6,7 @@ import Queen from './antqueen.png';
 //import Ant from './ant.png';
 import Ant from './AntComponent';
 import ChamberComponent from './ChamberComponent.js';
+import TunnelComponet from './TunnelComponet.js';
 
 
 //this allows us to test separately locally and on Heroku by changing just one line
@@ -269,6 +270,16 @@ class LListGameboard extends Component {
     return chamberArr.map((singleChamber) => <li style={{listStyleType:"none"}}>{singleChamber}</li> );
 
   }
+  renderTunnels = () => {
+    const queen = this.state.queen_at_head
+    var tunnelArr=[];
+
+    for(var i = 1; i < 3; i++) {
+      tunnelArr.push(<TunnelComponet/>);
+    }
+
+    return tunnelArr.map((singleTunnel) => <li style={{listStyleType:"none"}}>{singleTunnel}</li>);
+  }
 
   renderSurfaceAnts = () => {
     const queen = this.state.queen_at_head
@@ -321,6 +332,10 @@ class LListGameboard extends Component {
         </div>
         <div className="chambers">
           {this.renderChambers()}
+        </div>
+
+        <div className="tunnels">
+          {this.renderTunnels()}
         </div>
 
 

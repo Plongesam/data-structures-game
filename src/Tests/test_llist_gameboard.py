@@ -57,9 +57,10 @@ class TestStringMethods(unittest.TestCase):
     #def test_llist_gamepage_loads(self) :
         #self.driver.assertEqual
 
-    # checks that the chambers render
+    # checks that the chambers and tunnels render
     def test_chamber_rendering(self) :
         self.driver.find_element_by_id('chamberButton').click()
+        self.driver.find_element_by_id('tunnelButton').click()
         self.driver.find_element_by_name('chamberFoodUI')
 
 

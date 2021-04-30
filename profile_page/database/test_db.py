@@ -31,13 +31,13 @@ class DBCreateUserProfile( TestCase ):
         self.user = {"user_id":"5f7d1b1d8fd2b816c48c148b","badges":[31,24,83],
         "current_story_level":9,"email":"ryanb777@umbc.edu",
         "friends":["Kulsoom2","Nick2","Maksim2","Naomi2"],
-        "user_name":"ryan2","password_hash":"well,hello there","points":98274,"rank":"diamond",
+        "user_name":"ryan2","password_hash":"well,hello there","points":98274,"llistStandardPoints":98275,"llistSurvivalPoints":98276,"rank":"diamond",
         "save_games":["4(2(3)(no))(6(5))","4(2(3)(1))(6(5))","4(2(3)(1))(6(5))"]}
 
         self.user2 = {"auth_token":"cool!", "user_id":"second_guy","badges":[31,24,83],
         "current_story_level":9,"email":"ryan@umbc.edu",
         "friends":["Kulsoom2","Nick2","Maksim2","Naomi2"],
-        "user_name":"ryan2","password_hash":"well,hello there","points":98274,"rank":"diamond",
+        "user_name":"ryan2","password_hash":"well,hello there","points":98274,"llistStandardPoints":98275, "llistSurvivalPoints":98276, "rank":"diamond",
         "save_games":["4(2(3)(no))(6(5))","4(2(3)(1))(6(5))","4(2(3)(1))(6(5))"]}
 
     def test_save( self ):
@@ -105,7 +105,7 @@ class DBReadUserProfile( TestCase ):
         self.user = {"user_id":"5f7d1b1d8fd2b816c48c148b","badges":[31,24,83],
         "current_story_level":9,"email":"ryanb777@umbc.edu",
         "friends":["Kulsoom2","Nick2","Maksim2","Naomi2"],
-        "user_name":"ryan2","password_hash":"well,hello there","points":98274,"rank":"diamond",
+        "user_name":"ryan2","password_hash":"well,hello there","points":98274,"llistStandardPoints":98275, "llistSurvivalPoints":98276, "rank":"diamond",
         "save_games":["4(2(3)(no))(6(5))","4(2(3)(1))(6(5))","4(2(3)(1))(6(5))"]}
 
         mongo.save_user( self.user )
@@ -160,13 +160,13 @@ class DBUpdateUserProfile( TestCase ):
         self.user = {"user_id":"5f7d1b1d8fd2b816c48c148b","badges":[31,24,83],
         "current_story_level":9,"email":"ryanb777@umbc.edu",
         "friends":["Kulsoom2","Nick2","Maksim2","Naomi2"],
-        "user_name":"ryan2","password_hash":"well,hello there","points":98274,"rank":"diamond",
+        "user_name":"ryan2","password_hash":"well,hello there","points":98274,"llistStandardPoints":98275, "llistSurvivalPoints":98276,"rank":"diamond",
         "save_games":["4(2(3)(no))(6(5))","4(2(3)(1))(6(5))","4(2(3)(1))(6(5))"]}
 
         self.user2 = {"user_id":"5f7d1b1d8fd2b816c48c148b","badges":[989879879831,24,83],
         "current_story_level":9,"email":"ryanb777@umbc.edu",
         "friends":["Kulsoom2","Nick2","Maksim2","Naomi2"],
-        "user_name":"ryan2","password_hash":"well,hello there","points":98274,"rank":"diamond",
+        "user_name":"ryan2","password_hash":"well,hello there","points":98274,"llistStandardPoints":98275,"llistSurvivalPoints":98276,"rank":"diamond",
         "save_games":["4(2(3)(no))(6(5))","4(2(3)(1))(6(5))","4(2(3)(1))(6(5))"]}
 
         mongo.save_user( self.user )
@@ -229,7 +229,7 @@ class DBUpdateUserGame( TestCase ):
         self.user = {"user_id":"5f7d1b1d8fd2b816c48c148b",
         "badges":[31,24,83],"current_story_level":9,"email":"ryanb777@umbc.edu",
         "friends":["Kulsoom2","Nick2","Maksim2","Naomi2"],"user_name":"ryan2",
-        "password_hash":"well,hello there","points":98274,"rank":"diamond",
+        "password_hash":"well,hello there","points":98274,"llistStandardPoints":98275,"llistSurvivalPoints":98276,"rank":"diamond",
         "save_games":[self.board,"4(2(3)(1))(6(5))","4(2(3)(1))(6(5))"]}
 
         self.new_graph = {"nodes": "DID IT WRETITREE ???5))"}
@@ -272,7 +272,7 @@ class DBDeleteUser( TestCase ):
         "current_story_level":9,"email":"ryanb777@umbc.edu",
         "friends":["Kulsoom2","Nick2","Maksim2","Naomi2"],
         "user_name":"ryan2","password_hash":"well,hello there",
-        "points":98274,"rank":"diamond",
+        "points":98274,"llistStandardPoints":98275,"llistSurvivalPoints":98276,"rank":"diamond",
         "save_games":[{'game_id': '60afce36-085a-11eb-b6ab-acde48001122',
         'graph': {'nodes': 'DID IT WRETITREE ???5))'},
         'player_ids': ['id2', 'id3', 'id4', 'id5'],
@@ -315,7 +315,7 @@ class DBDeleteGames( TestCase ):
         self.user = {"user_id":"5f7d1b1d8fd2b816c48c148b","badges":[31,24,83],
         "current_story_level":9,"email":"ryanb777@umbc.edu",
         "friends":["Kulsoom2","Nick2","Maksim2","Naomi2"],
-        "user_name":"ryan2","password_hash":"well,hello there","points":98274,
+        "user_name":"ryan2","password_hash":"well,hello there","points":98274,"llistStandardPoints":98275,"llistSurvivalPoints":98276,
         "rank":"diamond","save_games":[{'game_id': '60afce36-085a-11eb-b6ab-acde48001122',
         'graph': {'nodes': 'DID IT WRETITREE ???5))'}, 'player_ids': ['id2', 'id3', 'id4', 'id5'],
         'player_names': ['naomi', 'kulsoom', 'nick', 'ryan'], 'player_points': {'id2': 2, 'id3': 2,
@@ -359,7 +359,7 @@ class DBList( TestCase ):
         self.user = {"user_id":"5f7d1b1d8fd2b816c48c148b","badges":[31,24,83],
         "current_story_level":9,"email":"ryanb777@umbc.edu",
         "friends":["Kulsoom2","Nick2","Maksim2","Naomi2"],
-        "user_name":"ryan2","password_hash":"well,hello there","points":98274,
+        "user_name":"ryan2","password_hash":"well,hello there","points":98274,"llistStandardPoints":98275,"llistSurvivalPoints":98276,
         "rank":"diamond","save_games":[{'game_id': '60afce36-085a-11eb-b6ab-acde48001122',
         'graph': {'nodes': 'DID IT WRETITREE ???5))'},
         'player_ids': ['id2', 'id3', 'id4', 'id5'],
@@ -437,7 +437,7 @@ class DBSaveUserGames( TestCase ):
         self.user = {"sharing": True, "auth_token":"cool!","user_id":"5f7d1b1d8fd2b816c48c148b",
         "badges":[31,24,83],"current_story_level":9,"email":"ryanb777@umbc.edu",
         "friends":["Kulsoom2","Nick2","Maksim2","Naomi2"],
-        "user_name":"ryan2","password_hash":"well,hello there","points":98274,"rank":"diamond",
+        "user_name":"ryan2","password_hash":"well,hello there","points":98274,"llistStandardPoints":98275,"llistSurvivalPoints":98276, "rank":"diamond",
         "save_games":[self.board,"4(2(3)(1))(6(5))","4(2(3)(1))(6(5))"]}
 
         mongo.save_user( self.user )
@@ -472,7 +472,7 @@ class DBReadUserGames( TestCase ):
         self.user = {"sharing": True, "auth_token":"cool!","user_id":"5f7d1b1d8fd2b816c48c148b",
         "badges":[31,24,83],"current_story_level":9,"email":"ryanb777@umbc.edu",
          "friends":["Kulsoom2","Nick2","Maksim2","Naomi2"],
-        "user_name":"ryan2","password_hash":"well,hello there","points":98274,"rank":"diamond",
+        "user_name":"ryan2","password_hash":"well,hello there","points":98274,"llistStandardPoints":98275,"llistSurvivalPoints":98276,"rank":"diamond",
         "save_games":[{'game_id': '60afce36-085a-11eb-b6ab-acde48001122',
         'graph': {'nodes': 'DID IT WRETITREE ???5))'},
         'player_ids': ['id2', 'id3', 'id4', 'id5'],
@@ -517,7 +517,7 @@ class DBUserAuthentication( TestCase ):
         self.user = {"sharing": True, "auth_token":"cool!","user_id":"5f7d1b1d8fd2b816c48c148b",
         "badges":[31,24,83],"current_story_level":9,"email":"ryanb777@umbc.edu",
         "friends":["Kulsoom2","Nick2","Maksim2","Naomi2"],"user_name":"ryan2",
-        "password_hash":"well,hello there","points":98274,"rank":"diamond",
+        "password_hash":"well,hello there","points":98274,"llistStandardPoints":98275, "llistSurvivalPoints":98276,"rank":"diamond",
         "save_games":[{'game_id': '60afce36-085a-11eb-b6ab-acde48001122',
         'graph': {'nodes': 'DID IT WRETITREE ???5))'}, 'player_ids': ['id2', 'id3', 'id4', 'id5'],
         'player_names': ['naomi', 'kulsoom', 'nick', 'ryan'],
@@ -641,7 +641,7 @@ class DBUserProfileGeneral( TestCase ):
         self.user = {"sharing": True, "auth_token":"cool!","user_id":"5f7d1b1d8fd2b816c48c148b",
         "badges":[31,24,83],"current_story_level":9,"email":"ryanb777@umbc.edu",
         "friends":["Kulsoom2","Nick2","Maksim2","Naomi2"],"user_name":"ryan2",
-        "password_hash":"well,hello there","points":98274,"rank":"diamond",
+        "password_hash":"well,hello there","points":98274,"llistStandardPoints":98275,"llistSurvivalPoints":98276,"rank":"diamond",
         "save_games":[{'game_id': '60afce36-085a-11eb-b6ab-acde48001122',
         'graph': {'nodes': 'DID IT WRETITREE ???5))'}, 'player_ids': ['id2', 'id3', 'id4', 'id5'],
         'player_names': ['naomi', 'kulsoom', 'nick', 'ryan'],
@@ -658,7 +658,7 @@ class DBUserProfileGeneral( TestCase ):
         self.user2 = {"sharing": True, "auth_token":"second auth!","user_id":"useridneedswork",
         "badges":[31,24,83],"current_story_level":9,"email":"ryacmon man@umbc.edu",
         "friends":["Kulsoom2","Nick2","Maksim2","Naomi2"],"user_name":"ryan2",
-        "password_hash":"well,hello there","points":98274,"rank":"diamond",
+        "password_hash":"well,hello there","points":98274,"llistStandardPoints":98275,"llistSurvivalPoints":98276,"rank":"diamond",
         "save_games":[{'game_id': 'not the same as the other user\'s game',
         'graph': {'nodes': 'DID IT WRETITREE ???5))'}, 'player_ids': ['id2', 'id3', 'id4', 'id5'],
         'player_names': ['naomi', 'kulsoom', 'nick', 'ryan'], 'player_points': {'id2': 2, 'id3': 2,
@@ -757,7 +757,7 @@ class DBUserPoints( TestCase ):
         self.user = {"sharing": True, "auth_token":"cool!","user_id":"5f7d1b1d8fd2b816c48c148b",
         "badges":[31,24,83],"current_story_level":9,"email":"ryanb777@umbc.edu",
          "friends":["Kulsoom2","Nick2","Maksim2","Naomi2"],
-        "user_name":"ryan2","password_hash":"well,hello there","points":98274,"rank":"diamond",
+        "user_name":"ryan2","password_hash":"well,hello there","points":98274,"llistStandardPoints":98275,"llistSurvivalPoints":98276,"rank":"diamond",
         "save_games":[{'game_id': '60afce36-085a-11eb-b6ab-acde48001122',
         'graph': {'nodes': 'DID IT WRETITREE ???5))'},
         'player_ids': ['id2', 'id3', 'id4', 'id5'],
@@ -778,6 +778,21 @@ class DBUserPoints( TestCase ):
 
         self.assertEqual( points, self.user["points"],
             msg=f'{BColors.FAIL}\t[-]\tUser\'s points were incorrect!{BColors.ENDC}' + where() )
+        print( f"{BColors.OKGREEN}\t[+]\tPass User-Profile database get points.\
+            {BColors.ENDC}" )
+
+    def test_get_llistStandard_points ( self):
+        points = mongo.get_llistStandard_points(self.user["user_id"])
+
+        self.assertEqual(points, self.user["llistStandardPoints"],
+            msg=f'{BColors.FAIL}\t[-]\tUser\'s llist standard points were incorrect!{BColors.ENDC}' + where() )
+        print( f"{BColors.OKGREEN}\t[+]\tPass User-Profile database get points.\
+            {BColors.ENDC}" )
+
+    def test_get_llistSurvival_points ( self):
+        points = mongo.get_llistSurvival_points(self.user["user_id"])
+        self.assertEqual(points, self.user["llistSurvivalPoints"],
+            msg=f'{BColors.FAIL}\t[-]\tUser\'s llist survival points were incorrect!{BColors.ENDC}' + where() )
         print( f"{BColors.OKGREEN}\t[+]\tPass User-Profile database get points.\
             {BColors.ENDC}" )
 

@@ -5,13 +5,15 @@ import sys
 
 class LList_Handler:
     def __init__(self):
-        self.ants = {'Q': {'location': 'surface', 'food_type': None}}
-        self.num_ants = {'surface': 1}
-        self.chambers = []
-        self.tunnels = {'surface': [0, None, None]}
-        self.food = {'surface': {'crumb': 0, 'berry': 0, 'donut': 0}}
-        self.under_attack = {}
-        self.num_chambers = 0
+        self.ants = {'Q': {'location': 'surface', 'food_type': None}} # {ant_id: {location:str, food_type:str}}
+        self.num_ants = {'surface': 1, 'chamber1': 0} # not needed?
+        self.chambers = {'surface', 'chamber1'} # {chamber_id} not needed?
+        self.tunnels = {'surface': {'entrance': True, 'exit': True, 'prev': 'chamber1', 'next': 'chamber1'},
+                        'chamber1': {'entrance': True, 'exit': True, 'prev': 'surface', 'next': 'surface'}}
+        # Do we need to keep track of food on surface? can't store stuff on the surface
+        self.food = {'surface': {'crumb': 0, 'berry': 0, 'donut': 0}, 'chamber1': {'crumb': 3, 'berry': 0}}
+        self.under_attack = {'chamber1': False} # {chamber_id: bool}
+        self.num_chambers = 1 # doesn't include surface
 
     @classmethod
     def from_gamestate(cls, gamestate):
@@ -30,38 +32,38 @@ class LList_Handler:
             raise ValueError
         if dest is not None and dest not in self.chambers and dest != 'surface':
             raise ValueError
-        if self.tunnels[chamber][0] < 2:
-            self.tunnels[chamber][0] += 1
-        self.tunnels[chamber][2] = dest
+
+        self.tunnels[chamber]['next'] = dest
         if dest is not None:
-            self.tunnels[dest][1] = chamber
+            self.tunnels[dest]['prev'] = chamber
 
     def digChamber(self, connecting_chbr):
         if connecting_chbr is not None:
             if connecting_chbr not in self.chambers and connecting_chbr != 'surface':
                 raise ValueError
         self.num_chambers += 1
-        newchamberID = "chamber" + str(len(self.chambers)+1)
+        newchamberID = "chamber" + str(len(self.chambers))
         self.chambers.append(newchamberID)
         self.num_ants[newchamberID] = 0
-        self.tunnels[newchamberID] = [1, connecting_chbr, None]
-        self.tunnels[connecting_chbr][2] = newchamberID
+        self.tunnels[newchamberID] = {'entrance': True, 'exit': False, 'prev': connecting_chbr, 'next': None}
+        self.tunnels[connecting_chbr]['next'] = newchamberID
         self.under_attack[newchamberID] = False
         self.food[newchamberID] = {'crumb': 0, 'berry': 0, 'donut': 0}
 
     def fillTunnel(self, chamber):
         if chamber in self.chambers:
-            self.tunnels[chamber][0] -= 1
-            if self.tunnels[chamber][2] is not None:
-                self.tunnels[self.tunnels[chamber][2]][1] = None
-                self.tunnels[self.tunnels[chamber][2]][0] -= 1
-                self.tunnels[chamber][2] = None
+            prev = self.tunnels[chamber]['prev']
+            next = self.tunnels[chamber]['next']
+            # self.tunnels[chamber][0] -= 1
+            if next is not None:
+                next['prev'] = None
+                self.tunnels[chamber]['next'] = next
         else:
             raise ValueError
 
     def fillChamber(self, chamber):
         if chamber in self.chambers:
-            self.tunnels[self.tunnels[chamber][1]][2] = None
+            self.tunnels[self.tunnels[chamber]['prev']]['next'] = None
             self.tunnels.pop(chamber)
             self.num_ants.pop(chamber)
             self.chambers.remove(chamber)

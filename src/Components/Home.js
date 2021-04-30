@@ -24,7 +24,7 @@ class Home extends Component{
       difficulty:null,
       players:null,
       data_structure:null,
-      data:[{"id":0,"user_name":"test","total_score":0}]
+      data:[{"id":0,"user_name":"test","AVL_score":0,"LLStandard_score":0, "LLSurival_score":0}]
     };
   }
 
@@ -39,15 +39,6 @@ class Home extends Component{
 
       //assemble api call 
       //get both AVL rankings and LList rankings
-
-
-      //this will be the api call to get the llist scores from the database
-      /*
-      let LLrankingsURL = url + "api/LLrankings/" + 20
-      let response = await fetch(LLrankingsURL);
-      let LLrank_head = await response.json()
-      this.setState( { data: LLrank_head['top_ranking_Linked_List_players'] })
-      */
 
       let rankingsURL = url + "api/rankings/" + 20;
       let response = await fetch(rankingsURL);
