@@ -123,7 +123,7 @@ def update_board_db(board, user_id='-1', token='-1'):
             _ = db.update_game(board['game_id'], board)
 
             # hide the UID used by data structure backend from user
-            del board['graph']['uid']
+            # del board['graph']['uid']
 
             # Update
             result['game_board'] = board
