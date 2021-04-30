@@ -74,7 +74,7 @@ class Profile(TestCase):
         # check that user profile has all the information required
         profile_data_points = list(response.data['user_profile'].keys())
         expected_points = ['user_name', 'badges', 'current_story_level', 'friends',
-                           'points', 'rank', 'saved_games']
+                           'points','llistStandardPoints', 'llistSurvivalPoints', 'rank', 'saved_games']
 
         self.assertEqual(profile_data_points, expected_points,
                          msg=f'{BColors.FAIL}\t[-]\tUser profile missing information!{BColors.ENDC}')
