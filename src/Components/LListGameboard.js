@@ -108,6 +108,7 @@ class LListGameboard extends Component {
                     food: game_board['total_food_types'],
                     total_food: game_board['total_food'],
                     queen: game_board['queen_at_head'],
+                    time: game_board['curr_day'],
                   });
 
     
@@ -138,6 +139,7 @@ class LListGameboard extends Component {
         //total_surface_ants: game_board['total_surface_ants'], 
         food: game_board['total_food_types'],
         total_food: game_board['total_food'],
+        time: game_board['curr_day'],
       });
 
       this.setState({spawningAnt: true}) // keep this, state is set after api call 
@@ -164,25 +166,42 @@ class LListGameboard extends Component {
     switch (this.state.action){
       case 'Dig chamber': 
         action_url = url+"game_board/llist_api/dig_chamber/" + this.state.board['game_id'] + '/' + action2 + '/' //+ move_ant
-        
       case 'Dig tunnel': 
         action_url = url+"game_board/llist_api/dig_tunnel/" + this.state.board['game_id'] + '/' + action2 + '/' //+ dest
-        
       case 'Forage': 
-        action_url = url+"game_board/llist_api/forage/" + this.state.board['game_id'] + '/' + this.state.difficulty + '/' //+ dest
-        
+        action_url = url+"game_board/llist_api/forage/" + this.state.board['game_id'] + '/' + this.state.difficulty + '/' //+ dest 
       case 'Move': 
         action_url = url+"game_board/llist_api/";
-        
       case 'Fill in chamber': 
         action_url = url+"game_board/llist_api/fill_chamber/" + this.state.board['game_id'] + '/' + action2
         
     }
     alert('You have chosen to ' + this.state.action)
 
+    // make the API call
+    let action_response = await fetch(action_url);
 
+    // get the response 
+    let game_board = await action_response.json();
+
+    // set state variables
+    this.setState({board: game_board})
+    this.setState({ 
+      board: game_board, 
+             numChambers: game_board['total_chambers'], 
+             chambers: game_board['ant_locations'], 
+             total_ants: game_board['total_ants'], 
+             total_surface_ants: game_board['total_surface_ants'], 
+             food: game_board['total_food_types'],
+             total_food: game_board['total_food'],
+             queen: game_board['queen_at_head'],
+             time: game_board['curr_day'],
+    });
+    this.setState({loading:false});
 
   };
+
+  render
 
   handleChange = (event) => {
     this.setState({ [event.target.name]: event.target.value});
