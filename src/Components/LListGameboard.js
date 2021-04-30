@@ -121,7 +121,6 @@ class LListGameboard extends Component {
       alert('There is already an ant hatching, try again later.')
     }
     else {
-      //this.setState({spawningAnt: true})
       // get request to api
       let spawn_url = url+"game_board/llist_api/spawn_ant/" + this.state.board['game_id']
       this.setState({loading:true});
@@ -146,13 +145,9 @@ class LListGameboard extends Component {
       
       // ant hatches after 5 seconds, egg dissappears, update the number of surface ants
       setTimeout(function() { //Start the timer
-        this.setState({spawningAnt: false}) //After 1 second, set render to true
+        this.setState({spawningAnt: false}) 
+        this.setState({total_surface_ants: game_board['total_surface_ants']})
       }.bind(this), 5000)
-      //await sleep(5000);
-      //this.setState({spawningAnt: false})
-      this.setState({total_surface_ants: game_board['total_surface_ants']})
-      
-
     } 
   };
 
@@ -248,7 +243,7 @@ class LListGameboard extends Component {
     var chamberArr=[];
     
     //for(var i = 1; i < 3; i++) {  //UNCOMMENT THIS LINE FOR TESTING, should be commenting when running the game normally
-    for(var i = 1; i < this.state.total_surface_ants; i++) {  //COMMENT THIS LINE OUT FOR TESTING
+    for(var i = 1; i < this.state.total_chambers; i++) {  //COMMENT THIS LINE OUT FOR TESTING
       chamberArr.push(<ChamberComponent food={this.state.total_food}/>);
     }
   
