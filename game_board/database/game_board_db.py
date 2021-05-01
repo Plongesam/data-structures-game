@@ -26,8 +26,8 @@ def create_game(board):
     """
     game_id = board["game_id"]
     user_list = board["player_ids"]
-
     returned_data = client.InitialDB.Active_Games.find_one({"game_id": game_id})
+    
     if returned_data is None:
 
         #Remove the players from the lobby

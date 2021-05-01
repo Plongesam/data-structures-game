@@ -40,6 +40,7 @@ def create_board_db(new_board):
     except Exception as err:
         result['error'] = True
         result['reason'] = str(err)
+
         return result
 
     return result
