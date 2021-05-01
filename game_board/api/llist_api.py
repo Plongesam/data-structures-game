@@ -121,6 +121,10 @@ def dig_tunnel(request, game_id, origin, destination):
     """
     # Game must exist
     # Load the game board from database
+    if destination == 'None':
+        destination = None
+
+
     response_status = utils.load_board_db(game_id)
     if response_status['error']:
         return Response({'error': response_status['reason']},
