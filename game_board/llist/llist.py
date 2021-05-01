@@ -7,7 +7,7 @@ class LList_Handler:
     def __init__(self):
         self.ants = {'Q': {'location': 'surface', 'food_type': None}} # {ant_id: {location:str, food_type:str}}
         self.num_ants = {'surface': 1, 'chamber1': 0} # not needed?
-        self.chambers = {'surface', 'chamber1'} # {chamber_id} not needed?
+        self.chambers = ['surface', 'chamber1'] # {chamber_id} not needed?
         self.tunnels = {'surface': {'entrance': True, 'exit': True, 'prev': 'chamber1', 'next': 'chamber1'},
                         'chamber1': {'entrance': True, 'exit': True, 'prev': 'surface', 'next': 'surface'}}
         # Do we need to keep track of food on surface? can't store stuff on the surface

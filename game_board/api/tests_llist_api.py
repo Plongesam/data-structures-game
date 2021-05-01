@@ -131,9 +131,25 @@ class GameActions(TestCase):
 
         board = response.data
 
-        # make sure there was an error since there isn't enough food
-        self.assertEqual(response.status_code, 400, msg=f'{BColors.FAIL}\t[-]\tResponse was not 400!{BColors.ENDC}')
-        print(f"{BColors.OKGREEN}\t[+]\tPass returning the correct response code.{BColors.ENDC}")
+        # make sure there is no error
+        self.assertNotEqual(response.status_code, 400, msg=f'{BColors.FAIL}\t[-]\tCould not spawn ant!{BColors.ENDC}')
+        print(f"{BColors.OKGREEN}\t[+]\tPass spawn ant api.{BColors.ENDC}")
+
+        # make sure food was taken
+        self.assertEqual(board['total_food'], 3, msg=f'{BColors.FAIL}\t[-]\tTotal food is off!{BColors.ENDC}')
+        print(f"{BColors.OKGREEN}\t[+]\tPass taking food after spawn.{BColors.ENDC}")
+
+        # make sure ant total was updated
+        self.assertEqual(board['total_ants'], 2, msg=f'{BColors.FAIL}\t[-]\tTotal ants are off!{BColors.ENDC}')
+        print(f"{BColors.OKGREEN}\t[+]\tPass creating a new ant.{BColors.ENDC}")
+
+        # make sure ant was placed on surface
+        self.assertEqual(board['total_surface_ants'], 2, msg=f'{BColors.FAIL}\t[-]\tNew ant not on surface!{BColors.ENDC}')
+        print(f"{BColors.OKGREEN}\t[+]\tPass placing ant on surface.{BColors.ENDC}")
+
+        # make sure donut was taken
+        self.assertEqual(board['total_food_types']['donut'], 0, msg=f'{BColors.FAIL}\t[-]\tDonut not taken!{BColors.ENDC}')
+        print(f"{BColors.OKGREEN}\t[+]\tPass taking a donut.{BColors.ENDC}")
 
 
         # remove the created game
@@ -146,13 +162,14 @@ class GameActions(TestCase):
         # load the game
         response = self.client.get('/game_board/llist_api/board/' + str(created_game.data['game_id']))
         # call spawn ant function
-        response = self.client.get('/game_board/llist_api/dig_tunnel/' + str(response.data['game_id']) + '/node1/node2')
+        response = self.client.get('/game_board/llist_api/dig_tunnel/' + str(response.data['game_id']) + '/chamber1/None')
         
         board = response.data
-
-        # make sure there was an error because nodes do not exist
-        self.assertEqual(response.status_code, 400, msg=f'{BColors.FAIL}\t[-]\tResponse was not 400!{BColors.ENDC}')
-        print(f"{BColors.OKGREEN}\t[+]\tPass returning the correct response code.{BColors.ENDC}")
+        err = response.data['invalid_action']
+        
+        # make sure there was an error, bc no ant in first chamber
+        self.assertEqual(err, 'no ants at origin', msg=f'{BColors.FAIL}\t[-]\tResponse was not valid!{BColors.ENDC}')
+        print(f"{BColors.OKGREEN}\t[+]\tPass returning the correct response code - dig tunnel.{BColors.ENDC}")
 
         # remove the created game
         sleep(0.2)
