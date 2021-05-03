@@ -71,3 +71,36 @@
   padding:0px 20px;
   font-size: 12px;
 }
+
+.surfaceAnts{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  position: absolute;
+  top: 46%;
+  left: 800px;
+  min-width: 2000px;
+  
+}
+
+.chambers{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  position: absolute;
+  top: 62%;
+  left: 600px;
+  min-width: 1000px;
+  min-height: 200px;
+}
+
+.tunnels{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  position: absolute;
+  top: 80%;
+  left: 900px;
+  min-width: 1000px;
+  min-height: 200px;
+}
