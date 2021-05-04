@@ -170,8 +170,8 @@ def dig_tunnel(request, game_id, origin, destination):
         return Response({'invalid_action': 'no ants at destination'},
                         status=status.HTTP_400_BAD_REQUEST)
 
-    # Origin chamber must NOT already have an exit tunnel
-    if board['graph']['tunnels'][origin]['next'] is not None:
+    # Origin chamber must NOT already have an exit tunnel, except if it's to the surface
+    if board['graph']['tunnels'][origin]['next'] is not None and board['graph']['tunnels'][origin]['next'] != 'surface':
         return Response({'invalid_action': 'exit tunnel exists'},
                         status=status.HTTP_400_BAD_REQUEST)
 
