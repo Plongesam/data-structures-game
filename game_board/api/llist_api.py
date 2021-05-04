@@ -542,7 +542,7 @@ def move_food(request, game_id, start, dest):
 
     # If destination chamber is not after the start, then error
     # (this is assuming start and dest are in the form of chamber#)
-    if int(dest[-1]) != (int(start[-1]) + 1):
+    if int(dest[7:]) != (int(start[7:]) + 1):
         return Response({'invalid_action': 'invalid move'},
                         status=status.HTTP_400_BAD_REQUEST)
 
@@ -558,6 +558,11 @@ def move_food(request, game_id, start, dest):
     # If start and dest don't exist for some reason
     if start not in board['graph']['chambers'] or dest not in board['graph']['chambers']:
         return Response({'invalid_action': 'invalid chambers'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    # If chambers aren't connected then return
+    if board['graph']['tunnels'][start]['next'] != dest:
+        return Response({'invalid_action': 'no tunnel'},
                         status=status.HTTP_400_BAD_REQUEST)
 
     # If there is no queen then game over actually
@@ -621,7 +626,7 @@ def move_food(request, game_id, start, dest):
 
     # Put food in the destination chamber
     board['graph']['food'][dest][food_picked_up] += 1
-    board['graph']['food'][dest]['total'] += 1
+    board['graph']['food'][dest]['total'] += value
 
     # Update ant locations
     board['graph']['num_ants'][start] -= 1
