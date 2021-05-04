@@ -251,3 +251,23 @@ class GameActions(TestCase):
         # remove the created game
         sleep(0.2)
         db.remove_game(created_game.data['game_id'])
+
+    def test_move_ant(self):
+        # create a new game
+        created_game = self.client.get('/game_board/llist_api/start_game/Easy/ID1lltest/LLIST')
+        # load the game
+        response = self.client.get('/game_board/llist_api/board/' + str(created_game.data['game_id']))
+        # call move food function
+        response = self.client.get('/game_board/llist_api/move_ant/' + str(response.data['game_id']) + '/chamber1/chamber2')
+
+        board = response.data
+
+        # make sure there was an error since there is no chamber 2
+        # more tests will be implemented once ants can move, thus allowing them to create more chambers
+        self.assertEqual(response.status_code, 400, msg=f'{BColors.FAIL}\t[-]\tResponse was not 400!{BColors.ENDC}')
+        print(f"{BColors.OKGREEN}\t[+]\tPass returning the correct response code - move_food.{BColors.ENDC}")
+
+
+        # remove the created game
+        sleep(0.2)
+        db.remove_game(created_game.data['game_id'])
