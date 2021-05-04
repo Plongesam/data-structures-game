@@ -528,6 +528,67 @@ def forage(request, game_id, difficulty, dest):
     return Response(board_response)
 
 
+# essentially the same as move food, but simplified
+@api_view(['GET'])
+def move_ant(request, game_id, start, dest):
+    """
+    Moves ant from start chamber to destination chamber
+
+    :param game_id: unique identifier of the board
+    :param start: The chamber to move from.
+    :param dest: the chamber where to move
+    :return game board JSON:
+    """
+
+    # Load the game board from database
+    response_status = utils.load_board_db(game_id)
+    if response_status['error']:
+        return Response({'error': response_status['reason']},
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    board = response_status['game_board']
+
+    # If start and dest don't exist for some reason
+    if start not in board['graph']['chambers'] or dest not in board['graph']['chambers']:
+        return Response({'invalid_action': 'invalid chambers'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    # If chambers aren't connected then return
+    if board['graph']['tunnels'][start]['next'] != dest:
+        return Response({'invalid_action': 'no tunnel'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    # If there is no queen then game over actually
+    if board['queen_at_head'] == False:
+        return Response({'invalid_action': 'game over'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    # If no ant to move
+    if board['graph']['num_ants'][start] == 0:
+        return Response({'invalid_action': 'no ants'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    # If the player can't make a move, return error
+    if board['time_tracks']['move/forage'] == 0:
+        return Response({'invalid_action': 'no time'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    # if at this point, update all relevant game board values
+    # Update ant locations
+    board['graph']['num_ants'][start] -= 1
+    board['graph']['num_ants'][dest] += 1
+
+    user_id = board['player_ids']
+    token = -1
+    # Update the board on database
+    response_status = utils.update_board_db(board, user_id, token)
+    if response_status['error']:
+        return Response({'error': response_status['reason']},
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    board_response = response_status['game_board']
+    return Response(board_response)
+
+
 @api_view(['GET'])
 def move_food(request, game_id, start, dest):
     """
