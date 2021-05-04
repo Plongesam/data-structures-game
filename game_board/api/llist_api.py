@@ -33,6 +33,7 @@ def api_overview(request):
         'Spawn Ant': '/spawn_ant/<str:game_id>',
         'Forage': '/forage/<str:game_id>/<str:difficulty>/<str:dest>',
         'Move Food': '/move_food/<str:game_id>/<str:start>/<str:dest>',
+        'Move Ant': '/move_ant/<str:game_id>/<str:start>/<str:dest>',
     }
     return Response(api_urls)
 
@@ -120,12 +121,12 @@ def dig_tunnel(request, game_id, origin, destination):
     :param origin: the chamber that the player wishes to dig from
     :param destination: the place that the player wishes to dig to (chamber name, 'surface', or 'none'
     """
-    # Game must exist
-    # Load the game board from database
+    # convert string to actual value
     if destination == 'None':
         destination = None
 
-
+    # Game must exist
+    # Load the game board from database
     response_status = utils.load_board_db(game_id)
     if response_status['error']:
         return Response({'error': response_status['reason']},
@@ -409,6 +410,7 @@ def spawn_ant(request, game_id):
     # if control reaches here, then spawning an ant is successful. Update both total and surface ant values.
     board['total_ants'] += 1
     board['total_surface_ants'] += 1
+    board['graph']['num_ants']['surface'] +=1
     action = ['spawn_ant']
     board['graph'] = doAction(board['graph'], action)
 
@@ -442,6 +444,24 @@ def forage(request, game_id, difficulty, dest):
         return Response({'error': response_status['reason']},
                         status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     board = response_status['game_board']
+
+    # Make sure that the destination chamber is in the colony
+    if dest not in board['graph']['chambers']:
+        return Response({'invalid_action': 'dest dne'},
+                        status=status.HTTP_400_BAD_REQUEST)
+    
+    # Make sure that the surface is connected to the dest somehow.
+    curr_chamber = 'surface'
+    connected = False
+    while board['graph']['tunnels'][curr_chamber]['next'] is not None and board['graph']['tunnels'][curr_chamber]['next'] != 'surface':
+        if board['graph']['tunnels'][curr_chamber]['next'] == dest:
+            connected = True
+            break
+        curr_chamber = board['graph']['tunnels'][curr_chamber]['next']
+
+    if connected == False:
+        return Response({'invalid_action': 'dest unreachable'},
+                        status=status.HTTP_400_BAD_REQUEST)
 
     # If there are no chambers player can't forage
     if board['total_chambers'] == 0:
@@ -497,6 +517,7 @@ def forage(request, game_id, difficulty, dest):
         board['graph']['under_attack'][dest] = True
         board['total_under_attack'] += 1
         board['total_surface_ants'] -= 1
+        board['graph']['num_ants']['surface'] -= 1
         board['graph']['num_ants'][dest] += 1
 
     # Otherwise, put the food in the requested chamber, move the ant, and update the board
@@ -511,6 +532,7 @@ def forage(request, game_id, difficulty, dest):
 
         # Move the ant from og spot to new spot
         board['total_surface_ants'] -= 1
+        board['graph']['num_ants']['surface'] -= 1
         board['graph']['num_ants'][dest] += 1
 
     # Decrement Move/Forage time track
@@ -576,6 +598,12 @@ def move_ant(request, game_id, start, dest):
     # Update ant locations
     board['graph']['num_ants'][start] -= 1
     board['graph']['num_ants'][dest] += 1
+
+    if start == 'surface':
+        board['total_surface_ants'] -= 1
+
+    # Decrement Move/Forage time track
+    board['time_tracks']['move/forage'] -= 1
 
     user_id = board['player_ids']
     token = -1
@@ -686,6 +714,9 @@ def move_food(request, game_id, start, dest):
     # Update ant locations
     board['graph']['num_ants'][start] -= 1
     board['graph']['num_ants'][dest] += 1
+
+    # Decrement Move/Forage time track
+    board['time_tracks']['move/forage'] -= 1
 
 
     user_id = board['player_ids']

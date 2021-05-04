@@ -227,9 +227,9 @@ def new_board(difficulty, player_ids, data_structures):
                 'donut': 1,
             },
             'time_tracks': {
-                'move/forage': 6,
-                'dig_tunnel_track': 6,
-                'dig/fill_chamber': 6,
+                'move/forage': 36,
+                'dig_tunnel_track': 36, #changing to 36 so that we can make more moves in the demo
+                'dig/fill_chamber': 36,
             },
             'total_ants': 1,
             'total_surface_ants': 1,
