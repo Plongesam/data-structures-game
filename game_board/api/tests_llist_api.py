@@ -373,6 +373,10 @@ class GameActions(TestCase):
         self.assertEqual(board['graph']['food']['chamber2']['total'] , 2, msg=f'{BColors.FAIL}\t[-]\tChamber2 total not updated!{BColors.ENDC}')
         print(f"{BColors.OKGREEN}\t[move_food]\tPass moving food from chamber1.{BColors.ENDC}")
 
+        # make sure total food didn't change nor total food types.
+        self.assertEqual(board['total_food'], 3, msg=f'{BColors.FAIL}\t[-]\tTotal Food Changed!{BColors.ENDC}')
+        print(f"{BColors.OKGREEN}\t[move_food]\tPass not changing total food.{BColors.ENDC}")
+
 
         # remove the created game
         sleep(0.2)
