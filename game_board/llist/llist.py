@@ -51,7 +51,7 @@ class LList_Handler:
         self.tunnels[newchamberID] = {'entrance': True, 'exit': False, 'prev': connecting_chbr, 'next': None}
         self.tunnels[connecting_chbr]['next'] = newchamberID
         self.under_attack[newchamberID] = False
-        self.food[newchamberID] = {'crumb': 0, 'berry': 0, 'donut': 0}
+        self.food[newchamberID] = {'total': 0, 'crumb': 0, 'berry': 0, 'donut': 0}
 
     def fillTunnel(self, chamber):
         if chamber in self.chambers:
