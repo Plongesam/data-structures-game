@@ -171,12 +171,12 @@ def dig_tunnel(request, game_id, origin, destination):
                         status=status.HTTP_400_BAD_REQUEST)
 
     # Origin chamber must NOT already have an exit tunnel
-    if board['graph']['tunnels'][origin][2] is not None:
+    if board['graph']['tunnels'][origin]['next'] is not None:
         return Response({'invalid_action': 'exit tunnel exists'},
                         status=status.HTTP_400_BAD_REQUEST)
 
     # destination must NOT already have an entrance tunnel
-    if destination is not None and board['graph']['tunnels'][destination][1] is not None:
+    if destination is not None and board['graph']['tunnels'][destination]['prev'] is not None:
         return Response({'invalid_action': 'exit tunnel exists'},
                         status=status.HTTP_400_BAD_REQUEST)
 
