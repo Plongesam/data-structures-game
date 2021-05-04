@@ -177,30 +177,49 @@ class GameActions(TestCase):
         self.assertNotEqual(response.status_code, 404, msg=f'{BColors.FAIL}\t[-]\tResponse was 404!{BColors.ENDC}')
         print(f"{BColors.OKGREEN}\t[dig_tunnel]\tPass returning the correct response code.{BColors.ENDC}")
 
+
         board = response.data
+
+        # make sure time track was updated
+        self.assertEqual(board['time_tracks']['dig_tunnel_track'], 35, msg=f'{BColors.FAIL}\t[-]\tTimetrack was not decremented!{BColors.ENDC}')
+        print(f"{BColors.OKGREEN}\t[dig_tunnel]\tPass updating dig tunnel time track.{BColors.ENDC}")
+
+        # make sure chamber1 no longer has a tunnel going to the surface, but has one going no where.
+        self.assertIsNone(board['graph']['tunnels']['chamber1']['next'], msg=f'{BColors.FAIL}\t[-]\tchamber1\'s next tunnel not None!{BColors.ENDC}')
+        print(f"{BColors.OKGREEN}\t[dig_tunnel]\tPass changing tunnel from surface to tunnel leading no where.{BColors.ENDC}")
 
         # remove the created game
         sleep(0.2)
         db.remove_game(created_game.data['game_id'])
 
-    # def test_dig_chamber(self):
-    #     # create a new game
-    #     created_game = self.client.get('/game_board/llist_api/start_game/Easy/ID1lltest/LLIST')
-    #     # load the game
-    #     response = self.client.get('/game_board/llist_api/board/' + str(created_game.data['game_id']))
-    #     # call spawn ant function
-    #     response = self.client.get(
-    #         '/game_board/llist_api/dig_chamber/' + str(response.data['game_id']) + '/node1/no')
+    def test_dig_chamber(self):
+        # create a new game
+        created_game = self.client.get('/game_board/llist_api/start_game/Easy/ID1lltest/LLIST')
+        # load the game
+        response = self.client.get('/game_board/llist_api/board/' + str(created_game.data['game_id']))
+        # call spawn ant function 
+        response = self.client.get('/game_board/llist_api/spawn_ant/' + str(response.data['game_id']))
+        # call move ant function, from surface -> chamber1 so that we can test digging a tunnel after chamber1
+        response = self.client.get('/game_board/llist_api/move_ant/' + str(response.data['game_id']) + '/surface/chamber1')
+        # call dig tunnel
+        response = self.client.get('/game_board/llist_api/dig_tunnel/' + str(response.data['game_id']) + '/chamber1/None')
+        # call dig chamber function for tunnel that was just made
+        response = self.client.get('/game_board/llist_api/dig_chamber/' + str(response.data['game_id']) + '/chamber1/no/None')
 
-    #     board = response.data
+        #print(response.data['invalid_action'])
+        # Make sure that there was no error in function call
+        self.assertNotEqual(response.status_code, 400, msg=f'{BColors.FAIL}\t[-]\tResponse was 400!{BColors.ENDC}')
+        self.assertNotEqual(response.status_code, 500, msg=f'{BColors.FAIL}\t[-]\tResponse was 500!{BColors.ENDC}')
+        self.assertNotEqual(response.status_code, 404, msg=f'{BColors.FAIL}\t[-]\tResponse was 404!{BColors.ENDC}')
+        print(f"{BColors.OKGREEN}\t[dig_chamber]\tPass returning the correct response code.{BColors.ENDC}")
 
-    #     # make sure there was an error because selected node does not exist
-    #     self.assertEqual(response.status_code, 400, msg=f'{BColors.FAIL}\t[-]\tResponse was not 400!{BColors.ENDC}')
-    #     print(f"{BColors.OKGREEN}\t[+]\tPass returning the correct response code.{BColors.ENDC}")
+        board = response.data
 
-    #     # remove the created game
-    #     sleep(0.2)
-    #     db.remove_game(created_game.data['game_id'])
+    
+
+        # remove the created game
+        sleep(0.2)
+        db.remove_game(created_game.data['game_id'])
 
     # def test_fill_chamber(self):
     #     # create a new game

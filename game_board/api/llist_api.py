@@ -28,7 +28,7 @@ def api_overview(request):
         'Start Game': '/start_game/<str:difficulty>/<str:player_ids>/<str:data_structures>',
         'Game Board': '/board/<str:game_id>',
         'Dig Tunnel': '/dig_tunnel/<str:game_id>/<str:origin>/<str:destination>',
-        'Dig Chamber': '/dig_chamber/<str:game_id>/<str:origin>/<str:move_ant>',
+        'Dig Chamber': '/dig_chamber/<str:game_id>/<str:origin>/<str:move_ant>/<str:ant>',
         'Fill Chamber': '/fill_chamber/<str:game_id>/<str:origin>/<str:to_fill>',
         'Spawn Ant': '/spawn_ant/<str:game_id>',
         'Forage': '/forage/<str:game_id>/<str:difficulty>/<str:dest>',
@@ -214,6 +214,8 @@ def dig_chamber(request, game_id, origin, move_ant, ant=None):
     :param move_ant: whether the player wishes to move the ant into the new chamber
     """
     # checklist
+    if ant == 'None':
+        ant = None
 
     # Check if game exists
     response_status = utils.load_board_db(game_id)
@@ -239,7 +241,7 @@ def dig_chamber(request, game_id, origin, move_ant, ant=None):
                         status=status.HTTP_400_BAD_REQUEST)
 
     # check if origin contains at least one ant
-    if origin == 'surface' and board['total_surface_ants'] == 0:
+    if origin == 'surface' and board['total_surface_ants'] == 1:
         return Response({'invalid_action': 'no ants on surface'},
                         status=status.HTTP_400_BAD_REQUEST)
     if board['graph']['num_ants'][origin] == 0:
@@ -247,13 +249,13 @@ def dig_chamber(request, game_id, origin, move_ant, ant=None):
                         status=status.HTTP_400_BAD_REQUEST)
 
     # Check if origin contains an exit tunnel
-    if board['graph']['tunnels'][origin][0] == 1:
+    if board['graph']['tunnels'][origin]['next'] is not None:
         return Response({'invalid_action': 'no available tunnel from origin'},
                         status=status.HTTP_400_BAD_REQUEST)
     # if origin contains a next tunnel, check if current next is 'none'
-    if board['graph']['tunnels'][origin][0] == 2 and board['graph']['tunnels'][origin][2] is not None:
-        return Response({'invalid_action': 'no available tunnel from origin'},
-                        status=status.HTTP_400_BAD_REQUEST)
+    # if board['graph']['tunnels'][origin][0] == 2 and board['graph']['tunnels'][origin][2] is not None:
+    #     return Response({'invalid_action': 'no available tunnel from origin'},
+    #                     status=status.HTTP_400_BAD_REQUEST)
 
     # if at this point, dig request is valid: update ALL relevant game board variables
     newchamberid = 'chamber' + str(len(board['graph']['chambers']) + 1)
