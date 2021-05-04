@@ -206,15 +206,35 @@ class GameActions(TestCase):
         # call dig chamber function for tunnel that was just made
         response = self.client.get('/game_board/llist_api/dig_chamber/' + str(response.data['game_id']) + '/chamber1/no/None')
 
-        #print(response.data['invalid_action'])
         # Make sure that there was no error in function call
         self.assertNotEqual(response.status_code, 400, msg=f'{BColors.FAIL}\t[-]\tResponse was 400!{BColors.ENDC}')
         self.assertNotEqual(response.status_code, 500, msg=f'{BColors.FAIL}\t[-]\tResponse was 500!{BColors.ENDC}')
         self.assertNotEqual(response.status_code, 404, msg=f'{BColors.FAIL}\t[-]\tResponse was 404!{BColors.ENDC}')
         print(f"{BColors.OKGREEN}\t[dig_chamber]\tPass returning the correct response code.{BColors.ENDC}")
 
+
         board = response.data
 
+        # make sure time track was updated
+        self.assertEqual(board['time_tracks']['dig/fill_chamber'], 35, msg=f'{BColors.FAIL}\t[-]\tTimetrack was not decremented!{BColors.ENDC}')
+        print(f"{BColors.OKGREEN}\t[dig_chamber]\tPass updating time tracks.{BColors.ENDC}")
+
+        # Make sure the new chamber was put in the chamber list
+        self.assertIn('chamber2', board['graph']['chambers'], msg=f'{BColors.FAIL}\t[-]\tChamber2 was not put in chamber list!{BColors.ENDC}')
+        print(f"{BColors.OKGREEN}\t[dig_chamber]\tPass putting chamber2 in chamber list.{BColors.ENDC}")
+
+        # Make sure chamber2 is connected to chamber1
+        self.assertEqual(board['graph']['tunnels']['chamber2']['prev'], 'chamber1', msg=f'{BColors.FAIL}\t[-]\tChamber2 is not connected to chamber1!{BColors.ENDC}')
+        print(f"{BColors.OKGREEN}\t[dig_chamber]\tPass connecting chambers with the tunnel.{BColors.ENDC}")
+
+        # Make sure ant didn't leave chamber1
+        self.assertEqual(board['graph']['num_ants']['chamber2'], 0, msg=f'{BColors.FAIL}\t[-]\tAnt was placed in chamber2!{BColors.ENDC}')
+        self.assertEqual(board['graph']['num_ants']['chamber1'], 1, msg=f'{BColors.FAIL}\t[-]\tAnt was move from chamber1!{BColors.ENDC}')
+        print(f"{BColors.OKGREEN}\t[dig_chamber]\tPass not moving the ant.{BColors.ENDC}")
+
+        # Make sure total number of chambers was updated
+        self.assertEqual(board['total_chambers'], 2, msg=f'{BColors.FAIL}\t[-]\tTotal number of chambers was not updated!{BColors.ENDC}')
+        print(f"{BColors.OKGREEN}\t[dig_chamber]\tPass updating number of chambers.{BColors.ENDC}")
     
 
         # remove the created game
@@ -318,15 +338,40 @@ class GameActions(TestCase):
         created_game = self.client.get('/game_board/llist_api/start_game/Easy/ID1lltest/LLIST')
         # load the game
         response = self.client.get('/game_board/llist_api/board/' + str(created_game.data['game_id']))
+        # call spawn ant function 
+        response = self.client.get('/game_board/llist_api/spawn_ant/' + str(response.data['game_id']))
+        # call move ant function, from surface -> chamber1 so that we can moving food from chamber1 to chamber 2
+        response = self.client.get('/game_board/llist_api/move_ant/' + str(response.data['game_id']) + '/surface/chamber1')
+        # call dig tunnel
+        response = self.client.get('/game_board/llist_api/dig_tunnel/' + str(response.data['game_id']) + '/chamber1/None')
+        # call dig chamber function for tunnel that was just made
+        response = self.client.get('/game_board/llist_api/dig_chamber/' + str(response.data['game_id']) + '/chamber1/no/None')
         # call move food function
         response = self.client.get('/game_board/llist_api/move_food/' + str(response.data['game_id']) + '/chamber1/chamber2')
 
+        # make sure there was no error since we can now forage
+        self.assertNotEqual(response.status_code, 400, msg=f'{BColors.FAIL}\t[-]\tResponse was 400!{BColors.ENDC}')
+        self.assertNotEqual(response.status_code, 500, msg=f'{BColors.FAIL}\t[-]\tResponse was 500!{BColors.ENDC}')
+        self.assertNotEqual(response.status_code, 404, msg=f'{BColors.FAIL}\t[-]\tResponse was 404!{BColors.ENDC}')
+        print(f"{BColors.OKGREEN}\t[move_food]\tPass returning the correct response code.{BColors.ENDC}")
+
+
         board = response.data
 
-        # make sure there was an error since there is no chamber 2
-        # more tests will be implemented once ants can move, thus allowing them to create more chambers
-        self.assertEqual(response.status_code, 400, msg=f'{BColors.FAIL}\t[-]\tResponse was not 400!{BColors.ENDC}')
-        print(f"{BColors.OKGREEN}\t[move_food]\tPass returning the correct response code.{BColors.ENDC}")
+
+        # make sure time track was updated
+        self.assertEqual(board['time_tracks']['move/forage'], 34, msg=f'{BColors.FAIL}\t[-]\tTimetrack was not decremented!{BColors.ENDC}')
+        print(f"{BColors.OKGREEN}\t[move_food]\tPass updating time tracks.{BColors.ENDC}")
+
+        # Make sure chamber1 is updated correctly
+        self.assertEqual(board['graph']['food']['chamber1']['berry'] , 0, msg=f'{BColors.FAIL}\t[-]\tBerry still in chamber1!{BColors.ENDC}')
+        self.assertEqual(board['graph']['food']['chamber1']['total'] , 1, msg=f'{BColors.FAIL}\t[-]\tChamber1 total not updated!{BColors.ENDC}')
+        print(f"{BColors.OKGREEN}\t[move_food]\tPass moving food from chamber1.{BColors.ENDC}")
+
+        # Make sure chamber2 is updated correctly
+        self.assertEqual(board['graph']['food']['chamber2']['berry'] , 1, msg=f'{BColors.FAIL}\t[-]\tBerry still in chamber1!{BColors.ENDC}')
+        self.assertEqual(board['graph']['food']['chamber2']['total'] , 2, msg=f'{BColors.FAIL}\t[-]\tChamber2 total not updated!{BColors.ENDC}')
+        print(f"{BColors.OKGREEN}\t[move_food]\tPass moving food from chamber1.{BColors.ENDC}")
 
 
         # remove the created game

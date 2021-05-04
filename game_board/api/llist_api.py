@@ -260,6 +260,7 @@ def dig_chamber(request, game_id, origin, move_ant, ant=None):
     # if at this point, dig request is valid: update ALL relevant game board variables
     newchamberid = 'chamber' + str(len(board['graph']['chambers']) + 1)
     board['graph'] = doAction(board['graph'], ('dig_chamber', origin))
+    board['total_chambers'] += 1
 
     if move_ant == 'yes' and ant is not None:
         board['graph'] = doAction(board['graph'], ('move_ant', ant, newchamberid))
@@ -388,15 +389,32 @@ def spawn_ant(request, game_id):
     # Take away food, if they have food that can be
     curr_food_types = board['total_food_types']
 
+    # Find the first chamber with enough food
+    chamber_with_food = None
+    for chamber in board['graph']['chambers']:
+        if chamber != 'surface' and board['graph']['food'][chamber]['total'] >= config.ANT_SPAWN_VAL:
+            chamber_with_food = chamber
+            break
+        
+
     # If player has a donut take it
     if curr_food_types[config.FORAGE_TYPES[2]] > 0:
         board['total_food_types'][config.FORAGE_TYPES[2]] -= 1
         board['total_food'] -= config.ANT_SPAWN_VAL
+
+        board['graph']['food'][chamber_with_food][config.FORAGE_TYPES[2]] -= 1
+        board['graph']['food'][chamber_with_food]['total'] -= config.ANT_SPAWN_VAL
+
     # If player has at least one berry and one crumb, take one of each
     elif curr_food_types[config.FORAGE_TYPES[1]] > 0 and curr_food_types[config.FORAGE_TYPES[0]] > 0:
         board['total_food_types'][config.FORAGE_TYPES[1]] -= 1
         board['total_food_types'][config.FORAGE_TYPES[0]] -= 1
         board['total_food'] -= config.ANT_SPAWN_VAL
+
+        board['graph']['food'][chamber_with_food][config.FORAGE_TYPES[1]] -= 1
+        board['graph']['food'][chamber_with_food][config.FORAGE_TYPES[0]] -= 1
+        board['graph']['food'][chamber_with_food]['total'] -= config.ANT_SPAWN_VAL
+
     # If player only has crumbs take it
     elif curr_food_types[config.FORAGE_TYPES[0]] >= config.ANT_SPAWN_VAL:
         board['total_food_types'][config.FORAGE_TYPES[0]] -= config.ANT_SPAWN_VAL
@@ -405,6 +423,10 @@ def spawn_ant(request, game_id):
         board['total_food_types'][config.FORAGE_TYPES[1]] -= 2
         board['total_food_types'][config.FORAGE_TYPES[0]] += 1
         board['total_food'] -= config.ANT_SPAWN_VAL
+
+        board['graph']['food'][chamber_with_food][config.FORAGE_TYPES[1]] -= 2
+        board['graph']['food'][chamber_with_food][config.FORAGE_TYPES[1]] += 1
+        board['graph']['food'][chamber_with_food]['total'] -= config.ANT_SPAWN_VAL
     else:
         return Response({'invalid_action': 'error occurred'},
                         status=status.HTTP_400_BAD_REQUEST)
@@ -639,6 +661,10 @@ def move_food(request, game_id, start, dest):
                         status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     board = response_status['game_board']
 
+    # Make sure that the player isn't trying to move to or from surface.
+    if start == 'surface' or dest == 'surface':
+        return Response({'invalid_action': 'no food on surface allowed'},
+                        status=status.HTTP_400_BAD_REQUEST)
 
     # If start and dest don't exist for some reason
     if start not in board['graph']['chambers'] or dest not in board['graph']['chambers']:
