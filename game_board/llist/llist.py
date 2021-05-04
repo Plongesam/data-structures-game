@@ -11,7 +11,10 @@ class LList_Handler:
         self.tunnels = {'surface': {'entrance': True, 'exit': True, 'prev': 'chamber1', 'next': 'chamber1'},
                         'chamber1': {'entrance': True, 'exit': True, 'prev': 'surface', 'next': 'surface'}}
         # Do we need to keep track of food on surface? can't store stuff on the surface
-        self.food = {'surface': {'crumb': 0, 'berry': 0, 'donut': 0}, 'chamber1': {'crumb': 3, 'berry': 0}}
+        self.food = {
+            'surface': {'total': 0,'crumb': 0, 'berry': 0, 'donut': 0}, 
+            'chamber1': {'total': 6,'crumb': 1, 'berry': 1, 'donut': 1}
+        }
         self.under_attack = {'chamber1': False} # {chamber_id: bool}
         self.num_chambers = 1 # doesn't include surface
 

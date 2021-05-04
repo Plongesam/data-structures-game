@@ -501,8 +501,8 @@ def forage(request, game_id, difficulty, dest):
     # Otherwise, put the food in the requested chamber, move the ant, and update the board
     else:
         # Change food in requested chamber
-        board['graph']['num_food'][dest][forage_result] += 1
-        board['graph']['num_food'][dest]['total'] += config.FOOD_VALUE[forage_result]
+        board['graph']['food'][dest][forage_result] += 1
+        board['graph']['food'][dest]['total'] += config.FOOD_VALUE[forage_result]
 
         # Change food stats on for the game board
         board['total_food_types'][forage_result] += 1
@@ -525,3 +525,65 @@ def forage(request, game_id, difficulty, dest):
 
     board_response = response_status['game_board']
     return Response(board_response)
+
+
+@api_view(['GET'])
+def move_food(request, game_id, start, dest):
+    """
+    Moves food from start chamber to destination chamber
+
+    :param game_id: unique identifier of the board
+    :param start: The chamber to move the food from.
+    :param dest: the chamber where the food should be placed
+    :return game board JSON:
+    """ 
+    # If there is no queen then game over actually
+    if board['queen_at_head'] == False:
+        return Response({'invalid_action': 'lost queen'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    # Load the game board from database
+    response_status = utils.load_board_db(game_id)
+    if response_status['error']:
+        return Response({'error': response_status['reason']},
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    board = response_status['game_board']
+
+    # If there are no chambers player can't move food
+    if board['total_chambers'] == 1:
+        return Response({'invalid_action': 'no chambers'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    # If there are no ants in the start chamber then can't move food
+    if board['graph']['num_ants'][start] == 0:
+        return Response({'invalid_action': 'no ants'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    # If the requested dest chamber is under attack then can't move food
+    if board['graph']['under_attack'][dest]:
+        return Response({'invalid_action': 'under attack'},
+                        status=status.HTTP_400_BAD_REQUEST)
+    
+    # If there is no food in the starting chamber then you can't move food
+    if board['graph']['food'][start]['total'] == 0:
+        return Response({'invalid_action': 'no food'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+
+    # If the start chamber is under attack,
+    # then the ant will go hulk mode, and move all the food,
+    # otherwise, just one piece of food at a time.
+    if board['graph']['under_attack'][start]:
+        crumbs = board['graph']['food'][start]['crumb']
+        berries = board['graph']['food'][start]['berry']
+        donuts = board['graph']['food'][start]['donut']
+        total = board['graph']['food'][start]['total']
+
+        board['graph']['food'][start]['total'] = 0
+        board['graph']['food'][start]['crumb'] = 0
+        board['graph']['food'][start]['berry'] = 0
+        board['graph']['food'][start]['donut'] = 0
+
+
+
+
