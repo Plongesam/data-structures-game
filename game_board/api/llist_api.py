@@ -540,12 +540,6 @@ def move_food(request, game_id, start, dest):
     """ 
 
 
-    # If destination chamber is not after the start, then error
-    # (this is assuming start and dest are in the form of chamber#)
-    if int(dest[7:]) != (int(start[7:]) + 1):
-        return Response({'invalid_action': 'invalid move'},
-                        status=status.HTTP_400_BAD_REQUEST)
-
 
     # Load the game board from database
     response_status = utils.load_board_db(game_id)
