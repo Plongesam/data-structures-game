@@ -218,7 +218,8 @@ def new_board(difficulty, player_ids, data_structures):
             'queen_at_head': True,
             'colony_exit': False,
             'colony_entrance': False,
-            'total_chambers': 0,
+            'total_chambers': 1,
+            'total_tunnels': 0,
             'total_food': config.INIT_NUM_FOOD,
             'total_food_types': {
                 'crumb': 1,

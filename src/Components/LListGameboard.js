@@ -41,6 +41,7 @@ class LListGameboard extends Component {
       food: [],
       time: 0,
       numChambers: 0,
+      numTunnels: 0,
       chambers:[],
       total_ants: 0,
       total_surface_ants: 0,
@@ -103,6 +104,7 @@ class LListGameboard extends Component {
     */
     this.setState({ board: game_board, 
                     numChambers: game_board['total_chambers'], 
+                    numTunnels: game_board['total_tunnels'],
                     chambers: game_board['ant_locations'], 
                     total_ants: game_board['total_ants'], 
                     total_surface_ants: game_board['total_surface_ants'], 
@@ -164,20 +166,23 @@ class LListGameboard extends Component {
     // set url based on ant action chosen
     this.setState({loading:true})
     
-    switch (this.state.action){
-      case 'Dig chamber': 
-        action_url = url+"game_board/llist_api/dig_chamber/" + this.state.board['game_id'] + '/' + action2 + '/' //+ move_ant
-      case 'Dig tunnel': 
-        action_url = url+"game_board/llist_api/dig_tunnel/" + this.state.board['game_id'] + '/' + action2 + '/' //+ dest
-      case 'Forage': 
-        action_url = url+"game_board/llist_api/forage/" + this.state.board['game_id'] + '/' + this.state.difficulty + '/' //+ dest 
-      case 'Move': 
-        action_url = url+"game_board/llist_api/";
-      case 'Fill in chamber': 
-        action_url = url+"game_board/llist_api/fill_chamber/" + this.state.board['game_id'] + '/' + action2
-        
+    if (this.state.action === 'Dig chamber') {
+      action_url = url+"game_board/llist_api/dig_chamber/" + this.state.board['game_id'] + '/' + this.state.board['action2'] + '/None'
     }
-    alert('You have chosen to ' + this.state.action)
+    else if (this.state.action === 'Dig tunnel'){
+      action_url = url+"game_board/llist_api/dig_tunnel/" + this.state.board['game_id'] + '/' + this.state.board['action2'] + '/None'
+    }
+    else if (this.state.action === 'Forage'){
+      action_url = url+"game_board/llist_api/forage/" + this.state.board['game_id'] + '/' + this.state.difficulty + '/' //+ dest
+    }
+    else if (this.state.action === 'Move'){
+      action_url = url+"game_board/llist_api/";
+    }
+    else if (this.state.action === 'Fill in chamber'){
+      action_url = url+"game_board/llist_api/fill_chamber/" + this.state.board['game_id'] + '/' + action2
+    }
+
+    //alert('You have chosen to ' + this.state.action + ' action2: ' + this.state.action2)
 
     // make the API call
     let action_response = await fetch(action_url);
@@ -220,7 +225,7 @@ class LListGameboard extends Component {
     var optionList=[];
     //this.state.total_chambers
     if (this.state.action === 'Dig chamber') {
-      var num = 0
+      var num = this.state.numTunnels
     }
     else if (this.state.action === 'Dig tunnel'){
       var num = this.state.numChambers
@@ -234,11 +239,11 @@ class LListGameboard extends Component {
     else if (this.state.action === 'Fill in chamber'){
       var num = this.state.numChambers
     }
-    for(var i = 1; i < num; i++) {
+    for(var i = 1; i <= num; i++) {
       optionList.push(i);
     }
     let dropDown = num > 0 && optionList.map((item, i) => {
-	    return ( <option value={i}>{i}</option> )
+	    return ( <option value={i}>{i+1}</option> )
 	  }, this);
 
 	  return (
@@ -287,7 +292,7 @@ class LListGameboard extends Component {
     var chamberArr=[];
     
     //for(var i = 1; i < 3; i++) {  //UNCOMMENT THIS LINE FOR TESTING, should be commenting when running the game normally
-    for(var i = 1; i < this.state.total_chambers; i++) {  //COMMENT THIS LINE OUT FOR TESTING
+    for(var i = 1; i <= this.state.numChambers; i++) {  //COMMENT THIS LINE OUT FOR TESTING
       chamberArr.push(<ChamberComponent food={this.state.total_food}/>);
     }
   
@@ -299,7 +304,7 @@ class LListGameboard extends Component {
     const queen = this.state.queen_at_head
     var tunnelArr=[];
 
-    for(var i = 1; i < 1; i++) { // this.state.numTunnels 
+    for(var i = 1; i < this.state.numTunnels; i++) { // this.state.numTunnels 
       tunnelArr.push(<TunnelComponet/>);
     }
 
@@ -349,7 +354,7 @@ class LListGameboard extends Component {
         </span>
         
         {this.state.spawningAnt ? 
-        <figure id="egg" style={{background:"White", borderRadius:"50%", height:"50px", width:"30px", position:'absolute', top: '51%', left:'38%', transform:"rotate(300deg)"}} />
+        <figure id="egg" style={{background:"White", borderRadius:"50%", height:"50px", width:"30px", position:"absolute", top: "51%", left:"55vh", transform:"rotate(300deg)"}} />
         : null
         }
         <div className="surfaceAnts">
