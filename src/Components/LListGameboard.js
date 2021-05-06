@@ -42,7 +42,7 @@ class LListGameboard extends Component {
       time: 0,
       numChambers: 0,
       numTunnels: 0,
-      chambers:[],
+      chambers: null,
       total_ants: 0,
       total_surface_ants: 0,
       queen: false,
@@ -105,7 +105,7 @@ class LListGameboard extends Component {
     this.setState({ board: game_board, 
                     numChambers: game_board['total_chambers'], 
                     numTunnels: game_board['total_tunnels'],
-                    chambers: game_board['ant_locations'], 
+                    chambers: game_board['graph']['chambers'], 
                     total_ants: game_board['total_ants'], 
                     total_surface_ants: game_board['total_surface_ants'], 
                     food: game_board['total_food_types'],
@@ -195,7 +195,7 @@ class LListGameboard extends Component {
     this.setState({ 
       board: game_board, 
              numChambers: game_board['total_chambers'], 
-             chambers: game_board['ant_locations'], 
+             chambers: game_board['graph']['chambers'], 
              total_ants: game_board['total_ants'], 
              total_surface_ants: game_board['total_surface_ants'], 
              food: game_board['total_food_types'],
@@ -284,18 +284,16 @@ class LListGameboard extends Component {
   }
 
   // this is the react container that renders the chambers
-  // renders the first chamber as long as numChambers >= 1
   renderChambers = () => {
     
     const queen = this.state.queen_at_head
     // creates an array of Chamber Components
     var chamberArr=[];
-    
-    //for(var i = 1; i < 3; i++) {  //UNCOMMENT THIS LINE FOR TESTING, should be commenting when running the game normally
-    for(var i = 1; i <= this.state.numChambers; i++) {  //COMMENT THIS LINE OUT FOR TESTING
-      chamberArr.push(<ChamberComponent food={this.state.total_food}/>);
+    for(var prop in this.state.chambers){
+      if(prop != 'surface') {
+        chamberArr.push(<ChamberComponent ants={this.state.chambers[prop]['num_ants']} food={this.state.chambers[prop]['food']['total']} crumb={this.state.chambers[prop]['food']['crumb']} berry={this.state.chambers[prop]['food']['berry']} donut={this.state.chambers[prop]['food']['donut']} under_attack={this.state.chambers[prop]['under_attack']}/>);
+      }
     }
-  
     return chamberArr.map((singleChamber) => <li style={{listStyleType:"none"}}>{singleChamber}</li> );
 
   }
