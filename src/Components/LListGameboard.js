@@ -81,7 +81,7 @@ class LListGameboard extends Component {
     this.setState({player: cookies.get('playerList')})
 
     // add cookie variables to url
-    let createGameURL = url + "game_board/llist_api/start_game/" + difficulty + "/" + players + "/" + ds
+    let createGameURL = url + "game_board/llist_api/start_game/" + difficulty + "/" + players + "/" + ds;
     let getGameURL = url + "game_board/llist_api/board/";
 
     
@@ -96,6 +96,7 @@ class LListGameboard extends Component {
     //get request to api and include the dynamic game_id
     response = await fetch(getGameURL + game_id['game_id']);
     let game_board = await response.json(); 
+    console.log(game_board);
 
     //set the state value from json response
     /*
@@ -163,39 +164,45 @@ class LListGameboard extends Component {
     var action2 = this.state.action2;
     var action3 = this.state.action3;
     let action_url = "";
-    // set url based on ant action chosen
-    this.setState({loading:true})
+    
+    // set action 2
+    if( this.state.action2 === '0') { action2 = 'surface'}
+    else{ action2 = 'chamber' + this.state.action2;}
     
     if (this.state.action === 'Dig chamber') {
-      action2 = 'chamber' + this.state.action2;
-      action_url = url+"game_board/llist_api/dig_chamber/" + this.state.board['game_id'] + '/' + action2 + '/true' + '/None'
+      //action2 = 'chamber' + this.state.action2;
+      action_url = url+"game_board/llist_api/dig_chamber/" + this.state.board['game_id'] + "/" + action2 + "/true" + "/None"
     }
     else if (this.state.action === 'Dig tunnel'){
-      action2 = 'chamber' + this.state.action2;
+      //action2 = 'chamber' + this.state.action2;
       //action3 = 'chamber' + this.state.action3;
+      if( this.state.action3 === '0') { action3 = 'surface'}
+      else{ action3 = 'chamber' + this.state.action3;}
       action_url = url+"game_board/llist_api/dig_tunnel/" + this.state.board['game_id'] + '/' + action2 + '/None' //+ action3
     }
     else if (this.state.action === 'Forage'){
-      action2 = 'chamber' + this.state.action2;
-      action_url = url+"game_board/llist_api/forage/" + this.state.board['game_id'] + '/' + this.state.board['difficulty'] + '/' + action2
+      //action2 = "chamber" + this.state.action2;
+      action_url = url+"game_board/llist_api/forage/" + this.state.board['game_id'] + "/" + this.state.board['difficulty'] + "/" + action2.toString();
     }
-    else if (this.state.action === 'Move'){
-      action2 = 'chamber' + this.state.action2;
-      action3 = 'chamber' + this.state.action3;
+    else if (this.state.action === 'Move'){ 
+      if( this.state.action3 === '0') { action3 = 'surface'}
+      else{ action3 = 'chamber' + this.state.action3;}
       action_url = url+"game_board/llist_api/move_ant/" + this.state.board['game_id'] + '/' + action2 + '/' + action3;
     }
     else if (this.state.action === 'Move food'){
-      action2 = 'chamber' + this.state.action2;
-      action3 = 'chamber' + this.state.action3;
+      //action2 = 'chamber' + this.state.action2;
+      //action3 = 'chamber' + this.state.action3;
       action_url = url+"game_board/llist_api/move_food/" + this.state.board['game_id'] + '/' + action2 + '/' + action3;
     }
     else if (this.state.action === 'Fill in chamber'){
-      action2 = 'chamber' + this.state.action2;
+      //action2 = 'chamber' + this.state.action2;
       action_url = url+"game_board/llist_api/fill_chamber/" + this.state.board['game_id'] + '/' + action2
     }
 
     alert('url: ' + action_url)
 
+    // set url based on ant action chosen
+    this.setState({loading:true})
     // make the API call
     let action_response = await fetch(action_url);
 
