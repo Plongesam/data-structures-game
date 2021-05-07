@@ -243,14 +243,14 @@ class LListGameboard extends Component {
       optionList.push(i);
     }
     let dropDown = num > 0 && optionList.map((item, i) => {
-	    return ( <option value={i}>{i+1}</option> )
-	  }, this);
+      return ( <option value={i}>{i+1}</option> )
+    }, this);
 
-	  return (
+    return (
 
-		  <select value={this.state.action2} onChange={this.handleChange} name='action2' style={{marginRight:"10px"}}>
-			  {dropDown}
-		  </select>
+      <select value={this.state.action2} onChange={this.handleChange} name='action2' style={{marginRight:"10px"}}>
+        {dropDown}
+      </select>
     );
   }
 
