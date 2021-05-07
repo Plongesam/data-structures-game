@@ -55,7 +55,7 @@ class LListGameboard extends Component {
       // ant action values
       action: "",
       action2: "",
-      chamber: "",
+      action3: "",
 
     };
   }
@@ -140,7 +140,7 @@ class LListGameboard extends Component {
       this.setState({ 
         total_ants: game_board['total_ants'], 
         //total_surface_ants: game_board['total_surface_ants'], 
-        food: game_board['total_food_types'],
+        chambers: game_board['graph']['chambers'], 
         total_food: game_board['total_food'],
         time: game_board['curr_day'],
       });
@@ -158,37 +158,53 @@ class LListGameboard extends Component {
 
   handleGo = async (event) => {
     //alert('You have chosen to ' + this.state.action)
-    event.preventDefault();
-    const action1 = this.state.action;
-    const action2 = this.state.action2;
-    const action3 = this.state.action3;
+    //event.preventDefault();
+    var action1 = this.state.action;
+    var action2 = this.state.action2;
+    var action3 = this.state.action3;
     let action_url = "";
     // set url based on ant action chosen
     this.setState({loading:true})
     
     if (this.state.action === 'Dig chamber') {
-      action_url = url+"game_board/llist_api/dig_chamber/" + this.state.board['game_id'] + '/' + this.state.board['action2'] + '/None'
+      action2 = 'chamber' + this.state.action2;
+      action_url = url+"game_board/llist_api/dig_chamber/" + this.state.board['game_id'] + '/' + action2 + '/true' + '/None'
     }
     else if (this.state.action === 'Dig tunnel'){
-      action_url = url+"game_board/llist_api/dig_tunnel/" + this.state.board['game_id'] + '/' + this.state.board['action2'] + '/None'
+      action2 = 'chamber' + this.state.action2;
+      //action3 = 'chamber' + this.state.action3;
+      action_url = url+"game_board/llist_api/dig_tunnel/" + this.state.board['game_id'] + '/' + action2 + '/None' //+ action3
     }
     else if (this.state.action === 'Forage'){
-      action_url = url+"game_board/llist_api/forage/" + this.state.board['game_id'] + '/' + this.state.difficulty + '/' //+ dest
+      action2 = 'chamber' + this.state.action2;
+      action_url = url+"game_board/llist_api/forage/" + this.state.board['game_id'] + '/' + this.state.board['difficulty'] + '/' + action2
     }
     else if (this.state.action === 'Move'){
-      action_url = url+"game_board/llist_api/";
+      action2 = 'chamber' + this.state.action2;
+      action3 = 'chamber' + this.state.action3;
+      action_url = url+"game_board/llist_api/move_ant/" + this.state.board['game_id'] + '/' + action2 + '/' + action3;
+    }
+    else if (this.state.action === 'Move food'){
+      action2 = 'chamber' + this.state.action2;
+      action3 = 'chamber' + this.state.action3;
+      action_url = url+"game_board/llist_api/move_food/" + this.state.board['game_id'] + '/' + action2 + '/' + action3;
     }
     else if (this.state.action === 'Fill in chamber'){
+      action2 = 'chamber' + this.state.action2;
       action_url = url+"game_board/llist_api/fill_chamber/" + this.state.board['game_id'] + '/' + action2
     }
 
-    //alert('You have chosen to ' + this.state.action + ' action2: ' + this.state.action2)
+    alert('url: ' + action_url)
 
     // make the API call
     let action_response = await fetch(action_url);
 
     // get the response 
     let game_board = await action_response.json();
+    /*if(game_board['invalid_action'] || game_board['error']) {
+      alert('Error')
+      return;
+    }*/
 
     // set state variables
     this.setState({board: game_board})
@@ -207,7 +223,6 @@ class LListGameboard extends Component {
 
   };
 
-  render
 
   handleChange = (event) => {
     this.setState({ [event.target.name]: event.target.value});
@@ -223,6 +238,8 @@ class LListGameboard extends Component {
   // the options change based on the first option choice
   dropDownOptions = () => {
     var optionList=[];
+    var optionList2=[];
+    var num2 = 0;
     //this.state.total_chambers
     if (this.state.action === 'Dig chamber') {
       var num = this.state.numTunnels
@@ -231,26 +248,38 @@ class LListGameboard extends Component {
       var num = this.state.numChambers
     }
     else if (this.state.action === 'Forage'){
-      var num = this.state.total_surface_ants
+      var num = this.state.numChambers
     }
-    else if (this.state.action === 'Move'){
-      var num = this.state.total_surface_ants
+    else if (this.state.action === 'Move' || this.state.action === 'Move food'){
+      var num = this.state.numChambers
+      num2 = this.state.numChambers
     }
     else if (this.state.action === 'Fill in chamber'){
       var num = this.state.numChambers
     }
-    for(var i = 1; i <= num; i++) {
-      optionList.push(i);
+    for(var i = 0; i <= num; i++) {
+      optionList.push(i.toString());
+    }
+    for(var i = 0; i <= num2; i++) {
+      optionList2.push(i.toString());
     }
     let dropDown = num > 0 && optionList.map((item, i) => {
-	    return ( <option value={i}>{i+1}</option> )
+	    return ( <option value={i.toString()}>{i}</option> )
+	  }, this);
+    let dropDown2 = num2 > 0 && optionList2.map((item, i) => {
+	    return ( <option value={i.toString()}>{i}</option> )
 	  }, this);
 
 	  return (
-
-		  <select value={this.state.action2} onChange={this.handleChange} name='action2' style={{marginRight:"10px"}}>
-			  {dropDown}
-		  </select>
+      <span>
+		    <select value={this.state.action2} onChange={this.handleChange} name='action2' style={{marginRight:"10px"}}>
+			    {dropDown}
+		    </select>
+        {(this.state.action === 'Move' || this.state.action === 'Move food' || this.state.action === 'Dig tunnel' )&&
+        <select value={this.state.action3} onChange={this.handleChange} name='action3' style={{marginRight:"10px"}}>
+          {dropDown2}
+        </select>}
+      </span>
     );
   }
 
@@ -266,15 +295,16 @@ class LListGameboard extends Component {
               <option value="Dig tunnel">Dig Tunnel</option>
               <option value="Forage">Forage</option>
               <option value="Move">Move</option>
+              <option value="Move food">Move Food</option>
               <option value="Fill in chamber">Fill Chamber</option>
             </select>
             
             {this.dropDownOptions()}
-
+{/*
             {this.state.action === 'Move' &&
               <select value={this.state.chamber} onChange={this.handleChange} name='move_to_chamber' style={{marginRight:"10px"}}>
                 <option value="chamber">Choose Chamber...</option> 
-              </select>}
+</select>}*/}
 
           <input type="submit" style={{background:'#36cf57', borderRadius:'5px'}} value="Go!"/>
           </div>
@@ -317,9 +347,7 @@ class LListGameboard extends Component {
       ants.push(<Ant/>);
     }
 
-    //if (queen) {
     return ants.map((ant) => <li style={{listStyleType:"none"}}>{ant}</li>);
-    //}
   }
 
   // startHover and endHover are used when mouse is hovering over queen ant 
