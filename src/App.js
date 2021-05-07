@@ -18,7 +18,7 @@ export default function App() {
         {/* A <Switch> looks through its children <Route>s and
             renders the first one that matches the current URL. */}
         <Switch>
-          <Route path="/game_board/llist_api">
+          <Route path="/llist_gameboard">
             <LListGameboard />
           </Route>
           <Route path="/game_board">
