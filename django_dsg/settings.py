@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'home_page',
     'game_board',
+    'llist_gameboard',
     'profile_page',
     'register',
     'tutorial'

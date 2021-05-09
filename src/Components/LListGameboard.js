@@ -63,6 +63,7 @@ class LListGameboard extends Component {
   //component rendered at least once
   // fetch the data here
   async componentDidMount() {
+    console.log("Component did mount");
 
     const cookies = new Cookies();
 
@@ -81,8 +82,8 @@ class LListGameboard extends Component {
     this.setState({player: cookies.get('playerList')})
 
     // add cookie variables to url
-    let createGameURL = url + "game_board/llist_api/start_game/" + difficulty + "/" + players + "/" + ds;
-    let getGameURL = url + "game_board/llist_api/board/";
+    let createGameURL = url + "llist_gameboard/llist_api/start_game/" + difficulty + "/" + players + "/" + ds;
+    let getGameURL = url + "llist_gameboard/llist_api/board/";
 
     
     //API call to start game
@@ -127,7 +128,7 @@ class LListGameboard extends Component {
     }
     else {
       // get request to api
-      let spawn_url = url+"game_board/llist_api/spawn_ant/" + this.state.board['game_id']
+      let spawn_url = url+"llist_gameboard/llist_api/spawn_ant/" + this.state.board['game_id']
       this.setState({loading:true});
 
       // make the API call
@@ -166,50 +167,51 @@ class LListGameboard extends Component {
     let action_url = "";
     
     // set action 2
-    if( this.state.action2 == "0") { action2 = "surface"}
+    if( this.state.action2 == 0) { action2 = "surface";}
     else{ action2 = 'chamber' + this.state.action2;}
     
     if (this.state.action === 'Dig chamber') {
-      action_url = url+"game_board/llist_api/dig_chamber/" + this.state.board['game_id'] + "/" + action2 + "/true" + "/None"
+      action_url = url+"llist_gameboard/llist_api/dig_chamber/" + this.state.board['game_id'] + "/" + action2 + "/true" + "/None";
     }
     else if (this.state.action === 'Dig tunnel'){
-      if( this.state.action3 == "0") { action3 = "surface";}
+      if( this.state.action3 == 0) { action3 = "surface";}
       else{ action3 = 'chamber' + this.state.action3;}
-      action_url = url+"game_board/llist_api/dig_tunnel/" + this.state.board['game_id'] + '/' + action2 + '/None' //+ action3
+      action_url = url+"llist_gameboard/llist_api/dig_tunnel/" + this.state.board['game_id'] + '/' + action2 + '/None'; //+ action3
     }
     else if (this.state.action === 'Forage'){
-      action_url = url+"game_board/llist_api/forage/" + this.state.board['game_id'] + "/" + this.state.board['difficulty'] + "/" + action2.toString();
+      action_url = url+"llist_gameboard/llist_api/forage/" + this.state.board['game_id'] + "/" + this.state.board['difficulty'] + "/" + action2.toString();
     }
     else if (this.state.action === 'Move'){ 
-      if( this.state.action3 == "0") { action3 = "surface";}
+      if( this.state.action3 == 0) { action3 = "surface";}
       else{ action3 = "chamber" + this.state.action3;}
-      action_url = url+"game_board/llist_api/move_ant/" + this.state.board['game_id'] + '/' + action2 + '/' + action3;
+      action_url = url+"game_board/llist_api/move_ant/" + (this.state.board['game_id']).toString() + "/" + action2.toString() + "/" + action3.toString();
     }
     else if (this.state.action === 'Move food'){
-      if( this.state.action3 == "0") { action3 = "surface";}
+      if( this.state.action3 == 0) { action3 = "surface";}
       else{ action3 = "chamber" + this.state.action3;}
-      action_url = url+"game_board/llist_api/move_food/" + this.state.board['game_id'] + '/' + action2 + '/' + action3;
+      action_url = url+"llist_gameboard/llist_api/move_food/" + this.state.board['game_id'] + '/' + action2 + '/' + action3;
     }
     else if (this.state.action === 'Fill in chamber'){
-      action_url = url+"game_board/llist_api/fill_chamber/" + this.state.board['game_id'] + '/' + action2
+      action_url = url+"llist_gameboard/llist_api/fill_chamber/" + this.state.board['game_id'] + '/' + action2;
     }
 
-    alert('url: ' + action_url)
+    alert('url: ' + action_url);
 
     // set url based on ant action chosen
-    this.setState({loading:true})
+    this.setState({loading:true});
     // make the API call
     let action_response = await fetch(action_url);
 
     // get the response 
     let game_board = await action_response.json();
+    console.log(game_board);
     /*if(game_board['invalid_action'] || game_board['error']) {
       alert('Error')
       return;
     }*/
 
     // set state variables
-    this.setState({board: game_board})
+    this.setState({board: game_board});
     this.setState({ 
       board: game_board, 
              numChambers: game_board['total_chambers'], 
@@ -266,17 +268,17 @@ class LListGameboard extends Component {
       optionList2.push(i.toString());
     }
     let dropDown = num > 0 && optionList.map((item, i) => {
-	    return ( <option value={i.toString()}>{i}</option> )
-	  }, this);
+      return ( <option value={i.toString()}>{i}</option> )
+    }, this);
     let dropDown2 = num2 > 0 && optionList2.map((item, i) => {
-	    return ( <option value={i.toString()}>{i}</option> )
-	  }, this);
+      return ( <option value={i.toString()}>{i}</option> )
+    }, this);
 
-	  return (
+    return (
       <span>
-		    <select value={this.state.action2} onChange={this.handleChange} name='action2' style={{marginRight:"10px"}}>
-			    {dropDown}
-		    </select>
+        <select value={this.state.action2} onChange={this.handleChange} name='action2' style={{marginRight:"10px"}}>
+          {dropDown}
+        </select>
         {(this.state.action === 'Move' || this.state.action === 'Move food' || this.state.action === 'Dig tunnel' )&&
         <select value={this.state.action3} onChange={this.handleChange} name='action3' style={{marginRight:"10px"}}>
           {dropDown2}
