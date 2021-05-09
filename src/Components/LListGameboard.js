@@ -165,7 +165,7 @@ class LListGameboard extends Component {
 
   handleGo = async (event) => {
     //alert('You have chosen to ' + this.state.action)
-    //event.preventDefault();
+    event.preventDefault();
     var action1 = this.state.action;
     var action2 = this.state.action2;
     var action3 = this.state.action3;
@@ -189,7 +189,7 @@ class LListGameboard extends Component {
     else if (this.state.action === 'Move'){ 
       if( this.state.action3 == 0) { action3 = "surface";}
       else{ action3 = "chamber" + this.state.action3;}
-      action_url = url+"game_board/llist_api/move_ant/" + (this.state.board['game_id']).toString() + "/" + action2.toString() + "/" + action3.toString();
+      action_url = url+"game_board/llist_api/move_ant/" + (this.state.board['game_id']).toString() + "/" + action2 + "/" + action3;
     }
     else if (this.state.action === 'Move food'){
       if( this.state.action3 == 0) { action3 = "surface";}
@@ -205,12 +205,7 @@ class LListGameboard extends Component {
     // set url based on ant action chosen
     this.setState({loading:true});
     // make the API call
-    let requestOptions = {
-      method: 'GET',
-      //headers: {Accept: 'application/json', 'Content-Type': 'application/json'}
-      //body: JSON.stringify(rebalance_attempt)
-    };
-    let action_response = await fetch(action_url, requestOptions);
+    let action_response = await fetch(action_url);
 
     // get the response 
     let game_board = await action_response.json();
@@ -232,8 +227,8 @@ class LListGameboard extends Component {
               queen: game_board['queen_at_head'],
               time: game_board['curr_day'],
       });
-      this.setState({loading:false});
     }
+    this.setState({loading:false});
   };
 
 
