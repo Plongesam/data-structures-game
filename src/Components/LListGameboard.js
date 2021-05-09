@@ -136,26 +136,31 @@ class LListGameboard extends Component {
 
       // spawn or dont spawn based on response status
       let game_board = await spawn_response.json();
+      if( spawn_response.status >= 400) {
+        //this.setState({error: })
+        alert(game_board['invalid_action'])
+      }
+      else { // no erros, can spawn ant
+        // set state variables
+        this.setState({board: game_board})
+        this.setState({ 
+          total_ants: game_board['total_ants'], 
+          //total_surface_ants: game_board['total_surface_ants'], 
+          chambers: game_board['graph']['chambers'], 
+          total_food: game_board['total_food'],
+          time: game_board['curr_day'],
+        });
 
-      // set state variables
-      this.setState({board: game_board})
-      this.setState({ 
-        total_ants: game_board['total_ants'], 
-        //total_surface_ants: game_board['total_surface_ants'], 
-        chambers: game_board['graph']['chambers'], 
-        total_food: game_board['total_food'],
-        time: game_board['curr_day'],
-      });
-
-      this.setState({spawningAnt: true}) // keep this, state is set after api call 
-      this.setState({loading:false});
+        this.setState({spawningAnt: true}) // keep this, state is set after api call 
+        this.setState({loading:false});
       
-      // ant hatches after 5 seconds, egg dissappears, update the number of surface ants
-      setTimeout(function() { //Start the timer
-        this.setState({spawningAnt: false}) 
-        this.setState({total_surface_ants: game_board['total_surface_ants']})
-      }.bind(this), 5000)
-    } 
+        // ant hatches after 5 seconds, egg dissappears, update the number of surface ants
+        setTimeout(function() { //Start the timer
+          this.setState({spawningAnt: false}) 
+          this.setState({total_surface_ants: game_board['total_surface_ants']})
+        }.bind(this), 5000)
+      }
+    }
   };
 
   handleGo = async (event) => {
@@ -179,7 +184,7 @@ class LListGameboard extends Component {
       action_url = url+"llist_gameboard/llist_api/dig_tunnel/" + this.state.board['game_id'] + '/' + action2 + '/None'; //+ action3
     }
     else if (this.state.action === 'Forage'){
-      action_url = url+"llist_gameboard/llist_api/forage/" + this.state.board['game_id'] + "/" + this.state.board['difficulty'] + "/" + action2.toString();
+      action_url = url+"llist_gameboard/llist_api/forage/" + this.state.board['game_id'] + "/" + this.state.board['difficulty'] + "/" + action2;
     }
     else if (this.state.action === 'Move'){ 
       if( this.state.action3 == 0) { action3 = "surface";}
@@ -200,31 +205,35 @@ class LListGameboard extends Component {
     // set url based on ant action chosen
     this.setState({loading:true});
     // make the API call
-    let action_response = await fetch(action_url);
+    let requestOptions = {
+      method: 'GET',
+      //headers: {Accept: 'application/json', 'Content-Type': 'application/json'}
+      //body: JSON.stringify(rebalance_attempt)
+    };
+    let action_response = await fetch(action_url, requestOptions);
 
     // get the response 
     let game_board = await action_response.json();
     console.log(game_board);
-    /*if(game_board['invalid_action'] || game_board['error']) {
-      alert('Error')
-      return;
-    }*/
-
-    // set state variables
-    this.setState({board: game_board});
-    this.setState({ 
-      board: game_board, 
-             numChambers: game_board['total_chambers'], 
-             chambers: game_board['graph']['chambers'], 
-             total_ants: game_board['total_ants'], 
-             total_surface_ants: game_board['total_surface_ants'], 
-             food: game_board['total_food_types'],
-             total_food: game_board['total_food'],
-             queen: game_board['queen_at_head'],
-             time: game_board['curr_day'],
-    });
-    this.setState({loading:false});
-
+    if( action_response.status >= 400) {
+      alert(game_board['invalid_action'])
+    }
+    else { // no errors, fetch got a valid response
+      // set state variables
+      this.setState({board: game_board});
+      this.setState({ 
+        board: game_board, 
+              numChambers: game_board['total_chambers'], 
+              chambers: game_board['graph']['chambers'], 
+              total_ants: game_board['total_ants'], 
+              total_surface_ants: game_board['total_surface_ants'], 
+              food: game_board['total_food_types'],
+              total_food: game_board['total_food'],
+              queen: game_board['queen_at_head'],
+              time: game_board['curr_day'],
+      });
+      this.setState({loading:false});
+    }
   };
 
 
@@ -362,9 +371,12 @@ class LListGameboard extends Component {
     this.setState({hovering: false})
   }
 
+  
+
   render() {
     return (
       <div className="gamepage">
+        <div className="gradient-background"/>
         
         { this.renderChoices()}
         <div className="stats-container">

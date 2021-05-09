@@ -4,7 +4,7 @@ import Crumb from './dsgCrumb.png';
 import Donut from './dsgDonut.png';
 import Sugar from './dsgSugar.png';
 
-// renders a single worker ant
+// renders a single chamber
 class ChamberComponent extends React.Component {
     constructor(props) {
         super(props);

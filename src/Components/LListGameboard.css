@@ -1,6 +1,6 @@
 .gamepage {
-  background: linear-gradient(#34e6fe 45%, #36cf57 45%, #89724d 50%);
-  background-color: #00FF00;
+  /*background: linear-gradient(#34e6fe 45%, #36cf57 45%, #89724d 50%);
+  background-color: #00FF00;*/
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -8,6 +8,13 @@
   justify-content: center;
   
   
+}
+
+.gradient-background {
+  background: linear-gradient(#34e6fe 45%, #36cf57 45%, #89724d 50%);
+  position: fixed;
+  min-height: 100%;
+  min-width: 100%;
 }
 
 .title {
