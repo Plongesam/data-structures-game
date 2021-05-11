@@ -136,31 +136,36 @@ class LListGameboard extends Component {
 
       // spawn or dont spawn based on response status
       let game_board = await spawn_response.json();
+      if( spawn_response.status >= 400) {
+        //this.setState({error: })
+        alert(game_board['invalid_action'])
+      }
+      else { // no erros, can spawn ant
+        // set state variables
+        this.setState({board: game_board})
+        this.setState({ 
+          total_ants: game_board['total_ants'], 
+          //total_surface_ants: game_board['total_surface_ants'], 
+          chambers: game_board['graph']['chambers'], 
+          total_food: game_board['total_food'],
+          time: game_board['curr_day'],
+        });
 
-      // set state variables
-      this.setState({board: game_board})
-      this.setState({ 
-        total_ants: game_board['total_ants'], 
-        //total_surface_ants: game_board['total_surface_ants'], 
-        chambers: game_board['graph']['chambers'], 
-        total_food: game_board['total_food'],
-        time: game_board['curr_day'],
-      });
-
-      this.setState({spawningAnt: true}) // keep this, state is set after api call 
-      this.setState({loading:false});
+        this.setState({spawningAnt: true}) // keep this, state is set after api call 
+        this.setState({loading:false});
       
-      // ant hatches after 5 seconds, egg dissappears, update the number of surface ants
-      setTimeout(function() { //Start the timer
-        this.setState({spawningAnt: false}) 
-        this.setState({total_surface_ants: game_board['total_surface_ants']})
-      }.bind(this), 5000)
-    } 
+        // ant hatches after 5 seconds, egg dissappears, update the number of surface ants
+        setTimeout(function() { //Start the timer
+          this.setState({spawningAnt: false}) 
+          this.setState({total_surface_ants: game_board['total_surface_ants']})
+        }.bind(this), 3000)
+      }
+    }
   };
 
   handleGo = async (event) => {
     //alert('You have chosen to ' + this.state.action)
-    //event.preventDefault();
+    event.preventDefault();
     var action1 = this.state.action;
     var action2 = this.state.action2;
     var action3 = this.state.action3;
@@ -171,20 +176,20 @@ class LListGameboard extends Component {
     else{ action2 = 'chamber' + this.state.action2;}
     
     if (this.state.action === 'Dig chamber') {
-      action_url = url+"llist_gameboard/llist_api/dig_chamber/" + this.state.board['game_id'] + "/" + action2 + "/true" + "/None";
+      action_url = url+"llist_gameboard/llist_api/dig_chamber/" + this.state.board['game_id'] + "/" + action2 + "/no" + "/None";
     }
     else if (this.state.action === 'Dig tunnel'){
-      if( this.state.action3 == 0) { action3 = "surface";}
+      if( this.state.action3 === 'None') { action3 = "None";}
       else{ action3 = 'chamber' + this.state.action3;}
-      action_url = url+"llist_gameboard/llist_api/dig_tunnel/" + this.state.board['game_id'] + '/' + action2 + '/None'; //+ action3
+      action_url = url+"llist_gameboard/llist_api/dig_tunnel/" + this.state.board['game_id'] + '/' + action2 + '/' + action3; //+ action3
     }
     else if (this.state.action === 'Forage'){
-      action_url = url+"llist_gameboard/llist_api/forage/" + this.state.board['game_id'] + "/" + this.state.board['difficulty'] + "/" + action2.toString();
+      action_url = url+"llist_gameboard/llist_api/forage/" + this.state.board['game_id'] + "/" + this.state.board['difficulty'] + "/" + action2;
     }
     else if (this.state.action === 'Move'){ 
       if( this.state.action3 == 0) { action3 = "surface";}
       else{ action3 = "chamber" + this.state.action3;}
-      action_url = url+"game_board/llist_api/move_ant/" + (this.state.board['game_id']).toString() + "/" + action2.toString() + "/" + action3.toString();
+      action_url = url+"game_board/llist_api/move_ant/" + (this.state.board['game_id']).toString() + "/" + action2 + "/" + action3;
     }
     else if (this.state.action === 'Move food'){
       if( this.state.action3 == 0) { action3 = "surface";}
@@ -195,7 +200,6 @@ class LListGameboard extends Component {
       action_url = url+"llist_gameboard/llist_api/fill_chamber/" + this.state.board['game_id'] + '/' + action2;
     }
 
-    alert('url: ' + action_url);
 
     // set url based on ant action chosen
     this.setState({loading:true});
@@ -205,26 +209,25 @@ class LListGameboard extends Component {
     // get the response 
     let game_board = await action_response.json();
     console.log(game_board);
-    /*if(game_board['invalid_action'] || game_board['error']) {
-      alert('Error')
-      return;
-    }*/
-
-    // set state variables
-    this.setState({board: game_board});
-    this.setState({ 
-      board: game_board, 
-             numChambers: game_board['total_chambers'], 
-             chambers: game_board['graph']['chambers'], 
-             total_ants: game_board['total_ants'], 
-             total_surface_ants: game_board['total_surface_ants'], 
-             food: game_board['total_food_types'],
-             total_food: game_board['total_food'],
-             queen: game_board['queen_at_head'],
-             time: game_board['curr_day'],
-    });
+    if( action_response.status >= 400) {
+      alert(game_board['invalid_action'])
+    }
+    else { // no errors, fetch got a valid response
+      // set state variables
+      this.setState({board: game_board});
+      this.setState({ 
+        board: game_board, 
+              numChambers: game_board['total_chambers'], 
+              chambers: game_board['graph']['chambers'], 
+              total_ants: game_board['total_ants'], 
+              total_surface_ants: game_board['total_surface_ants'], 
+              food: game_board['total_food_types'],
+              total_food: game_board['total_food'],
+              queen: game_board['queen_at_head'],
+              time: game_board['curr_day'],
+      });
+    }
     this.setState({loading:false});
-
   };
 
 
@@ -246,10 +249,12 @@ class LListGameboard extends Component {
     var num2 = 0;
     //this.state.total_chambers
     if (this.state.action === 'Dig chamber') {
-      var num = this.state.numTunnels
+      var num = this.state.numChambers
     }
     else if (this.state.action === 'Dig tunnel'){
-      var num = this.state.numChambers
+      var num = this.state.numChambers;
+      num2 = this.state.numChambers;
+      optionList2.push("None");
     }
     else if (this.state.action === 'Forage'){
       var num = this.state.numChambers
@@ -267,11 +272,12 @@ class LListGameboard extends Component {
     for(var i = 0; i <= num2; i++) {
       optionList2.push(i.toString());
     }
+
     let dropDown = num > 0 && optionList.map((item, i) => {
       return ( <option value={i.toString()}>{i}</option> )
     }, this);
     let dropDown2 = num2 > 0 && optionList2.map((item, i) => {
-      return ( <option value={i.toString()}>{i}</option> )
+      return ( <option value={item.toString()}>{item}</option> )
     }, this);
 
     return (
@@ -362,9 +368,12 @@ class LListGameboard extends Component {
     this.setState({hovering: false})
   }
 
+  
+
   render() {
     return (
       <div className="gamepage">
+        <div className="gradient-background"/>
         
         { this.renderChoices()}
         <div className="stats-container">
