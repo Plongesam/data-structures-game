@@ -7,6 +7,7 @@ import Queen from './antqueen.png';
 import Ant from './AntComponent';
 import ChamberComponent from './ChamberComponent.js';
 import TunnelComponet from './TunnelComponet.js';
+import SurfaceTunnelComponet from './SurfaceTunnelComponet.js';
 
 
 //this allows us to test separately locally and on Heroku by changing just one line
@@ -343,6 +344,17 @@ class LListGameboard extends Component {
     return tunnelArr.map((singleTunnel) => <li style={{listStyleType:"none"}}>{singleTunnel}</li>);
   }
 
+  renderSurfaceTunnels = () => {
+    const queen = this.state.queen_at_head
+    var surfaceTunnelArr=[];
+
+    for (var i = 0; i < 1; i++) {
+      surfaceTunnelArr.push(<SurfaceTunnelComponet/>);
+    }
+    return surfaceTunnelArr.map((singleSurfaceTunnel) => <li style={{listStyleType:"none"}}>{singleSurfaceTunnel}</li>);
+  }
+
+
   renderSurfaceAnts = () => {
     const queen = this.state.queen_at_head
     // creates an array of Ant Components
@@ -363,6 +375,7 @@ class LListGameboard extends Component {
   }
 
   render() {
+  
     return (
       <div className="gamepage">
         
@@ -397,11 +410,15 @@ class LListGameboard extends Component {
         <div className="tunnels">
           {this.renderTunnels()}
         </div>
+        <div className="surfaceTunnels">
+          {this.renderSurfaceTunnels()}
+        </div>
 
 
       </div>
     );
+
   }
 }
 
-export default LListGameboard
+export default LListGameboard;

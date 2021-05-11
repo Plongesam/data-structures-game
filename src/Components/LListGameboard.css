@@ -104,3 +104,15 @@
   min-width: 1000px;
   min-height: 200px;
 }
+
+.surfaceTunnels{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  position: absolute;
+  top: 55%;
+  left: 725px;
+  min-width: 1000px;
+  min-height: 200px;
+}
+

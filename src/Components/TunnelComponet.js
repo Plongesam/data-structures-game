@@ -9,7 +9,7 @@ class TunnelComponet extends React.Component {
     }
     render() {
         return (
-            <button id='tunnelButton' style={{width:"350px", height:"100px", backgroundColor:"#5f5449", border:"Spx solid #5f5449", marginRight:"200px", borderRadius:"50px"}}>
+            <button id='tunnelButton' style={{width:"400px", height:"100px", backgroundColor:"#5f5449", border:"Spx solid #5f5449", marginRight:"200px", borderRadius:"50px"}}>
             </button>
             );
     }

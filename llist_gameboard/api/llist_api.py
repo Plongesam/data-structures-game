@@ -182,7 +182,8 @@ def dig_tunnel(request, game_id, origin, destination):
 
     # num_tunnels
     board['graph'] = doAction(board['graph'], ('dig_tunnel', origin, destination))
-
+    board['total_tunnels'] += 1
+    
     if origin == 'surface':
         board['colony_entrance'] = True
     if destination == 'surface':
