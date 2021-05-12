@@ -78,4 +78,3 @@ class LlistTests(TestCase):
         action = ['move_ant', 'A1', 'chamber1']
         gamestate = doAction(gamestate, action)
         self.assertEqual(1, gamestate['chambers']['chamber1']['num_ants'])
-

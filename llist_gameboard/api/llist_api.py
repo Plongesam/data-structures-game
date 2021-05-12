@@ -11,7 +11,7 @@ from rest_framework import status
 from rest_framework.throttling import AnonRateThrottle
 from rest_framework.throttling import UserRateThrottle
 from rest_framework.decorators import throttle_classes
-from game_board.api import utils
+from llist_gameboard.api import utils
 from .. import config
 from ..llist.llist import doAction
 
@@ -20,7 +20,6 @@ from ..llist.llist import doAction
 def api_overview(request):
     """
     Overview of the API calls exist.
-
     :param request:
     :return: Response, list of API URLs.
     """
@@ -44,7 +43,6 @@ def api_overview(request):
 def start_game(request, difficulty, player_ids, data_structures):
     """
     Creates a new game board.
-
     :param request:
     :param difficulty: game difficulty level
     :param player_ids: string of player IDs, comma seperated if more than one
@@ -96,7 +94,6 @@ def start_game(request, difficulty, player_ids, data_structures):
 def board(request, game_id):
     """
     Returns the current game board state.
-
     :param request:
     :param game_id: unique identifier of the board
     :return game board JSON:
@@ -185,7 +182,8 @@ def dig_tunnel(request, game_id, origin, destination):
 
     # num_tunnels
     board['graph'] = doAction(board['graph'], ('dig_tunnel', origin, destination))
-
+    board['total_tunnels'] += 1
+    
     if origin == 'surface':
         board['colony_entrance'] = True
     if destination == 'surface':
@@ -455,7 +453,6 @@ def spawn_ant(request, game_id):
 def forage(request, game_id, difficulty, dest):
     """
     Spawns an ant given the game ID
-
     :param game_id: unique identifier of the board
     :param difficulty: game difficulty
     :param ant_loc: the chamber in which the ant is located
@@ -581,7 +578,6 @@ def forage(request, game_id, difficulty, dest):
 def move_ant(request, game_id, start, dest):
     """
     Moves ant from start chamber to destination chamber
-
     :param game_id: unique identifier of the board
     :param start: The chamber to move from.
     :param dest: the chamber where to move
@@ -647,7 +643,6 @@ def move_ant(request, game_id, start, dest):
 def move_food(request, game_id, start, dest):
     """
     Moves food from start chamber to destination chamber
-
     :param game_id: unique identifier of the board
     :param start: The chamber to move the food from.
     :param dest: the chamber where the food should be placed

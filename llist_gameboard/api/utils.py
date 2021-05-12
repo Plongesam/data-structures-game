@@ -8,12 +8,12 @@ import uuid
 from datetime import datetime
 from bson import json_util
 
-from game_board import config
+from llist_gameboard import config
 from game_board import rules
 from game_board.avl import avl_handler as avl
-from game_board.database import game_board_db as db
+from llist_gameboard.database import game_board_db as db
 from profile_page.database import profile_page_db as profile_db
-from game_board.llist.llist import makeNewGame
+from llist_gameboard.llist.llist import makeNewGame
 
 
 def create_board_db(new_board):
@@ -21,7 +21,6 @@ def create_board_db(new_board):
     Creates a new game board instance in the database.
     Returns the error information if fails, or the game board ID.
     If
-
     :param new_board: dictionary for that represents the game board state.
     :return result, {'error': bool, 'reason': string, 'game_id': string}:
     """
@@ -53,7 +52,6 @@ def update_board_db(board, user_id='-1', token='-1'):
     If the game ended, then it changes the <end_game> field,
     and deletes the game from database. Otherwise, changes
     turn to the next player.
-
     :param board: game board
     :param user_id: username
     :param token: authentication token
@@ -140,7 +138,6 @@ def update_board_db(board, user_id='-1', token='-1'):
 def load_board_db(game_id):
     """
     Loads the game board state from the database by its ID.
-
     :param game_id: board's ID
     :return: game board
     """
@@ -171,7 +168,6 @@ def load_board_db(game_id):
 def new_board(difficulty, player_ids, data_structures):
     """
     Forms the JSON format for the game board state.
-
     :param difficulty: difficulty of the game
     :param player_ids: list of player ids
     :param data_structures: list of data structures
@@ -251,7 +247,6 @@ def new_board(difficulty, player_ids, data_structures):
 def cheat_check(game_board, card=-1, rebalance=False):
     """
     Validates the attempted action by the rules defined in rules.py
-
     :param game_board: game board JSON (dict), game state
     :param card: string that represents the action that is attempted to play
     :param rebalance: True if check is being done for re-balance attempt
@@ -274,7 +269,6 @@ def cheat_check(game_board, card=-1, rebalance=False):
 
 def create_card_deck(nodes, data_structure, difficulty, gold_node):
     """ Creates a deck of cards that will be drawn from for the duration of the game.
-
     :param nodes: nodes in the data structure
     :param data_structure: type of data structure
     :param difficulty: difficulty level of the game
@@ -330,10 +324,8 @@ def create_card_deck(nodes, data_structure, difficulty, gold_node):
 def distribute_cards(player_ids, deck):
     """
     Simulates the distribution of deck of cards to the players.
-
     :param player_ids: list of players in the game by their ID
     :param deck: the deck of available cards
-
     :return: dictionary of cards assigned to each player
     :return: updated deck
     """
@@ -356,7 +348,6 @@ def ai_format_hands(board):
     """ Create a formatted version of board[cards] that the AI can use.
     Order is preserved such that player of key '0' is the maximizer and key '1' through 'num_players - 1'
     are players that will go next (in order)
-
     :param board: the game board as given by database
     :return ordered_hands: the ordered dict (starting from the current player, ie the maximizer)
     """

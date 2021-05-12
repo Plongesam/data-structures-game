@@ -3,8 +3,8 @@ import random
 import string
 import json
 from django.test import TestCase
-from game_board import config
-from game_board.database import game_board_db as db
+from llist_gameboard import config
+from llist_gameboard.database import game_board_db as db
 
 
 class BColors:

@@ -128,12 +128,12 @@ render(){
                             </Link>
                         }
                         {this.state.gameDS === 'LLIST-survival' &&
-                            <Link className="flex justify-center shadow-xl transition duration-500 ease-in-out bg-blue-500 hover:bg-red-500 transform hover:-translate-y-1 hover:scale-105 bg-blue-300 border-blue-350 border-opacity-50 rounded-lg shadow-xl p-5 rounded text-xl font-bold" to="/game_board/llist_api" name="start_game">
+                            <Link className="flex justify-center shadow-xl transition duration-500 ease-in-out bg-blue-500 hover:bg-red-500 transform hover:-translate-y-1 hover:scale-105 bg-blue-300 border-blue-350 border-opacity-50 rounded-lg shadow-xl p-5 rounded text-xl font-bold" to="/llist_gameboard" name="start_game">
                                 Start Game
                             </Link>
                         }
                         {this.state.gameDS === 'LLIST-standard' &&
-                            <Link className="flex justify-center shadow-xl transition duration-500 ease-in-out bg-blue-500 hover:bg-red-500 transform hover:-translate-y-1 hover:scale-105 bg-blue-300 border-blue-350 border-opacity-50 rounded-lg shadow-xl p-5 rounded text-xl font-bold" to="/game_board/llist_api" name="start_game">
+                            <Link className="flex justify-center shadow-xl transition duration-500 ease-in-out bg-blue-500 hover:bg-red-500 transform hover:-translate-y-1 hover:scale-105 bg-blue-300 border-blue-350 border-opacity-50 rounded-lg shadow-xl p-5 rounded text-xl font-bold" to="/llist_gameboard" name="start_game">
                                 Start Game
                             </Link>
                         }
